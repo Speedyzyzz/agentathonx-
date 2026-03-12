@@ -1,93 +1,335 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IdeaForge</title>
+  <title>IdeaForge — Second Brain</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50:'#f0f4ff', 100:'#dbe4ff', 500:'#5b7ff5', 600:'#4263eb', 700:'#3b5bdb' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes pulse-dot { 0%,100%{opacity:.4} 50%{opacity:1} }
+    .thinking .dot { animation: pulse-dot .8s ease-in-out infinite; }
+    .thinking .dot:nth-child(2) { animation-delay:.15s; }
+    .thinking .dot:nth-child(3) { animation-delay:.3s; }
+    .markdown-body h1,.markdown-body h2,.markdown-body h3{font-weight:700;margin-top:.75rem;}
+    .markdown-body strong{color:#c4b5fd;}
+    .markdown-body ul{list-style:disc;padding-left:1.25rem;}
+    .markdown-body li{margin-bottom:.15rem;}
+  </style>
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-900">
-  <main class="mx-auto max-w-3xl px-4 py-10">
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight">IdeaForge</h1>
-      <p class="mt-2 text-sm text-slate-600">Store ideas, find connections, generate project concepts.</p>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-100">
 
-    <section class="grid gap-6">
-      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-lg font-semibold">Add Idea</h2>
+  <!-- ───── Header ───── -->
+  <header class="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur sticky top-0 z-10">
+    <div class="mx-auto max-w-5xl flex items-center justify-between px-4 py-3">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🧠</span>
+        <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-brand-500 to-violet-400 bg-clip-text text-transparent">IdeaForge</h1>
+        <span class="ml-2 rounded-full bg-brand-600/20 px-2 py-0.5 text-[10px] font-medium text-brand-500 uppercase tracking-wider">Second Brain</span>
+      </div>
+      <div id="memoryBadge" class="rounded-full bg-slate-700/60 px-3 py-1 text-xs text-slate-400">
+        💾 <span id="memCount">0</span> memories
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-5xl px-4 py-6 grid lg:grid-cols-[1fr_340px] gap-6">
+
+    <!-- ───── Left Column ───── -->
+    <div class="space-y-5">
+
+      <!-- Add Idea Card -->
+      <section class="rounded-2xl border border-slate-700/50 bg-slate-800/60 p-5">
+        <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-300 uppercase tracking-wider">
+          <span>💡</span> Add to your Second Brain
+        </h2>
         <div class="mt-3 flex gap-2">
-          <input id="ideaInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-400" placeholder="Enter idea" />
-          <button onclick="addIdea()" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Save</button>
+          <input id="ideaInput"
+            class="flex-1 rounded-xl border border-slate-600 bg-slate-700/50 px-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+            placeholder="Enter an idea, note, link, or project concept…" />
+          <select id="ideaType" class="rounded-xl border border-slate-600 bg-slate-700/50 px-2 py-2 text-xs text-slate-300 outline-none">
+            <option value="idea">💡 Idea</option>
+            <option value="note">📝 Note</option>
+            <option value="link">🔗 Link</option>
+            <option value="project">🚀 Project</option>
+          </select>
+          <button onclick="addIdea()" id="saveBtn"
+            class="rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
+            Save
+          </button>
         </div>
-        <p class="mt-2 text-xs text-slate-500">Tip: add 3–5 short ideas before asking.</p>
-      </div>
+      </section>
 
-      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-lg font-semibold">Ask AI</h2>
+      <!-- Ask Card -->
+      <section class="rounded-2xl border border-slate-700/50 bg-slate-800/60 p-5">
+        <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-300 uppercase tracking-wider">
+          <span>🔍</span> Ask your Second Brain
+        </h2>
         <div class="mt-3 flex gap-2">
-          <input id="questionInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-400" placeholder="Ask about your ideas" />
-          <button onclick="askAI()" class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">Ask</button>
+          <input id="questionInput"
+            class="flex-1 rounded-xl border border-slate-600 bg-slate-700/50 px-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+            placeholder="e.g. fitness startup idea…" />
+          <button onclick="askAI()" id="askBtn"
+            class="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 transition-colors">
+            Ask
+          </button>
         </div>
-      </div>
+      </section>
 
-      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="flex items-center justify-between gap-3">
-          <h2 class="text-lg font-semibold">Results</h2>
-          <button onclick="clearOutput()" class="text-xs text-slate-500 hover:text-slate-700">Clear</button>
+      <!-- Results / Agent Response -->
+      <section class="rounded-2xl border border-slate-700/50 bg-slate-800/60 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-300 uppercase tracking-wider">
+            <span>🧠</span> Agent Response
+          </h2>
+          <button onclick="clearOutput()" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Clear</button>
         </div>
-        <pre id="output" class="mt-3 max-h-[420px] overflow-auto rounded-xl bg-slate-950 p-4 text-xs leading-relaxed text-slate-100">{
-  "status": "ready"
-}</pre>
-      </div>
-    </section>
+        <div id="output" class="min-h-[120px] max-h-[520px] overflow-auto rounded-xl bg-slate-950/80 p-4 text-sm leading-relaxed text-slate-200 markdown-body">
+          <p class="text-slate-500 italic">Your Second Brain is ready. Add some ideas to get started.</p>
+        </div>
+      </section>
+    </div>
 
-    <footer class="mt-10 text-xs text-slate-500">
-      Backend expected at <span class="font-mono">http://127.0.0.1:8000</span>
-    </footer>
+    <!-- ───── Right Column: Memory Bank ───── -->
+    <aside class="space-y-5">
+      <section class="rounded-2xl border border-slate-700/50 bg-slate-800/60 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-300 uppercase tracking-wider">
+            <span>💾</span> Memory Bank
+          </h2>
+          <button onclick="loadMemories()" class="text-xs text-brand-500 hover:text-brand-400">Refresh</button>
+        </div>
+        <div id="memoryList" class="space-y-2 max-h-[600px] overflow-auto">
+          <p class="text-xs text-slate-500 italic">No memories yet.</p>
+        </div>
+      </section>
+
+      <!-- Connection Map (visual wow factor) -->
+      <section class="rounded-2xl border border-slate-700/50 bg-slate-800/60 p-5">
+        <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">
+          <span>🕸️</span> Connections
+        </h2>
+        <canvas id="graphCanvas" width="300" height="250" class="w-full rounded-xl bg-slate-950/60"></canvas>
+      </section>
+    </aside>
   </main>
 
+  <!-- ───── Footer ───── -->
+  <footer class="border-t border-slate-700/30 mt-8">
+    <div class="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between text-xs text-slate-600">
+      <span>IdeaForge — AI Second Brain Agent</span>
+      <span>Backend: <code class="text-slate-500">http://127.0.0.1:8000</code></span>
+    </div>
+  </footer>
+
 <script>
-  const BASE_URL = "http://127.0.0.1:8000";
+const BASE = "http://127.0.0.1:8000";
+const TYPE_ICONS = { idea:"💡", note:"📝", link:"🔗", project:"🚀" };
 
-  function setOutput(obj) {
-    document.getElementById("output").textContent = JSON.stringify(obj, null, 2);
-  }
+// ── Helpers ──────────────────────────────────────────────────────────
+function $(id) { return document.getElementById(id); }
 
-  function clearOutput() {
-    setOutput({ status: "ready" });
-  }
+function showThinking(msg = "Thinking") {
+  $("output").innerHTML = `
+    <div class="thinking flex items-center gap-1 text-slate-400">
+      <span>${msg}</span>
+      <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    </div>`;
+}
 
-  async function addIdea() {
-    const text = document.getElementById("ideaInput").value.trim();
-    if (!text) return;
+function renderMarkdown(text) {
+  // minimal markdown → html
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.+)$/gm, '<h3 class="text-base text-violet-300">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 class="text-lg text-violet-300">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 class="text-xl text-violet-200">$1</h1>')
+    .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/\n{2,}/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+}
 
-    const res = await fetch(`${BASE_URL}/add`, {
+function setOutput(html) {
+  $("output").innerHTML = html;
+}
+
+function clearOutput() {
+  $("output").innerHTML = '<p class="text-slate-500 italic">Your Second Brain is ready.</p>';
+}
+
+function updateCount(n) {
+  $("memCount").textContent = n;
+}
+
+// ── Memory Bank ──────────────────────────────────────────────────────
+async function loadMemories() {
+  try {
+    const res = await fetch(`${BASE}/memories`);
+    const data = await res.json();
+    updateCount(data.count);
+    const list = $("memoryList");
+    if (!data.memories.length) {
+      list.innerHTML = '<p class="text-xs text-slate-500 italic">No memories yet.</p>';
+      return data.memories;
+    }
+    list.innerHTML = data.memories.map(m => `
+      <div class="rounded-lg bg-slate-700/40 px-3 py-2 text-xs text-slate-300 flex items-start gap-2">
+        <span>${TYPE_ICONS[m.type] || "💡"}</span>
+        <span>${m.text}</span>
+      </div>
+    `).join("");
+    return data.memories;
+  } catch { return []; }
+}
+
+// ── Add Idea ─────────────────────────────────────────────────────────
+async function addIdea() {
+  const text = $("ideaInput").value.trim();
+  if (!text) return;
+  const type = $("ideaType").value;
+
+  $("saveBtn").disabled = true;
+  showThinking("Storing & analyzing");
+
+  try {
+    const res = await fetch(`${BASE}/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, type }),
     });
+    const data = await res.json();
+    updateCount(data.memory_count);
 
-    const data = await res.json().catch(() => ({}));
-    setOutput({ action: "add", request: { text }, response: data, ok: res.ok });
-
-    if (res.ok) document.getElementById("ideaInput").value = "";
+    const html = `
+      <div class="mb-3 rounded-lg bg-green-900/30 border border-green-700/30 px-3 py-2 text-xs text-green-300">
+        ✅ Stored: "${text}" &nbsp;(${data.memory_count} total memories)
+      </div>
+      <div>${renderMarkdown(data.analysis)}</div>
+    `;
+    setOutput(html);
+    $("ideaInput").value = "";
+    loadMemories();
+    drawGraph(data.related_memories || []);
+  } catch (e) {
+    setOutput(`<p class="text-red-400">Error: ${e.message}</p>`);
   }
+  $("saveBtn").disabled = false;
+}
 
-  async function askAI() {
-    const question = document.getElementById("questionInput").value.trim();
-    if (!question) return;
+// ── Ask AI ───────────────────────────────────────────────────────────
+async function askAI() {
+  const question = $("questionInput").value.trim();
+  if (!question) return;
 
-    const res = await fetch(`${BASE_URL}/ask`, {
+  $("askBtn").disabled = true;
+  showThinking("Searching memory & reasoning");
+
+  try {
+    const res = await fetch(`${BASE}/ask`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question }),
     });
-
     const data = await res.json();
-    setOutput(data);
+
+    const ideasHtml = data.related_ideas.length
+      ? data.related_ideas.map(i => `<span class="inline-block rounded-full bg-slate-700 px-2 py-0.5 text-xs mr-1 mb-1">${i}</span>`).join("")
+      : '<span class="text-slate-500">none</span>';
+
+    const html = `
+      <div class="mb-3 space-y-2">
+        <div class="rounded-lg bg-violet-900/20 border border-violet-700/30 px-3 py-2">
+          <span class="text-xs text-violet-400 font-semibold uppercase">Theme:</span>
+          <span class="ml-1 text-sm text-violet-200 font-medium">${data.theme}</span>
+        </div>
+        <div class="rounded-lg bg-slate-700/30 px-3 py-2">
+          <span class="text-xs text-slate-400 font-semibold uppercase">Retrieved Ideas:</span>
+          <div class="mt-1">${ideasHtml}</div>
+        </div>
+      </div>
+      <hr class="border-slate-700/50 my-3"/>
+      <div class="mb-4">${renderMarkdown(data.insight)}</div>
+      <hr class="border-slate-700/50 my-3"/>
+      <h3 class="text-xs text-slate-400 font-semibold uppercase mb-2">Generated Project Concept</h3>
+      <div>${renderMarkdown(data.project)}</div>
+    `;
+    setOutput(html);
+
+    // draw connections
+    const mems = data.related_ideas.map(t => ({ text: t }));
+    mems.push({ text: question, isQuery: true });
+    drawGraph(mems);
+  } catch (e) {
+    setOutput(`<p class="text-red-400">Error: ${e.message}</p>`);
   }
+  $("askBtn").disabled = false;
+}
+
+// ── Connection Graph (canvas) ────────────────────────────────────────
+function drawGraph(items) {
+  const canvas = $("graphCanvas");
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  if (!items.length) return;
+
+  // positions in a circle
+  const cx = W / 2, cy = H / 2, r = Math.min(W, H) / 2.8;
+  const nodes = items.map((m, i) => {
+    const angle = (2 * Math.PI * i) / items.length - Math.PI / 2;
+    return {
+      x: cx + r * Math.cos(angle),
+      y: cy + r * Math.sin(angle),
+      label: (m.text || "").slice(0, 24),
+      isQuery: m.isQuery || false,
+    };
+  });
+
+  // draw edges
+  ctx.strokeStyle = "rgba(139,92,246,0.25)";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      ctx.beginPath();
+      ctx.moveTo(nodes[i].x, nodes[i].y);
+      ctx.lineTo(nodes[j].x, nodes[j].y);
+      ctx.stroke();
+    }
+  }
+
+  // draw nodes
+  nodes.forEach(n => {
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.isQuery ? 7 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = n.isQuery ? "#8b5cf6" : "#5b7ff5";
+    ctx.fill();
+
+    ctx.font = "10px system-ui";
+    ctx.fillStyle = "#94a3b8";
+    ctx.textAlign = "center";
+    ctx.fillText(n.label, n.x, n.y + 16);
+  });
+}
+
+// ── Keyboard shortcuts ───────────────────────────────────────────────
+$("ideaInput").addEventListener("keydown", e => { if (e.key === "Enter") addIdea(); });
+$("questionInput").addEventListener("keydown", e => { if (e.key === "Enter") askAI(); });
+
+// ── Init ─────────────────────────────────────────────────────────────
+loadMemories();
 </script>
 
 </body>
