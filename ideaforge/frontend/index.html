@@ -348,26 +348,81 @@
           <p class="text-gray-600 text-xs mt-1">Add ideas → click Generate Project.</p>
         </div>
 
-        <!-- Results -->
-        <div id="resultsContent" class="hidden flex-col gap-4 overflow-y-auto max-h-[640px] pr-1">
+        <!-- Structured Results -->
+        <div id="resultsContent" class="hidden flex-col gap-3 overflow-y-auto max-h-[680px] pr-1">
+
+          <!-- Theme pill -->
           <div class="flex items-center gap-2 px-4 py-2.5 bg-forge-red/10 border border-forge-red/20 rounded-xl">
-            <span class="text-forge-red text-xs font-bold uppercase tracking-wider">Theme</span>
+            <span class="text-forge-red text-xs font-bold uppercase tracking-wider">🎯 Theme</span>
             <span id="themeText" class="text-white font-bold text-sm"></span>
           </div>
+
+          <!-- Retrieved memories -->
           <div>
-            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">Retrieved Memories</p>
+            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">💾 Retrieved Memories</p>
             <div id="relatedIdeas" class="flex flex-wrap gap-2"></div>
           </div>
+
           <hr class="border-white/5"/>
+
+          <!-- Insight -->
           <div>
-            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">Connection Insight</p>
+            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">🔗 Connection Insight</p>
             <div id="insightBody" class="result-body text-sm bg-black/40 rounded-xl p-4"></div>
           </div>
+
           <hr class="border-white/5"/>
-          <div>
-            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">Generated Project Concept</p>
+
+          <!-- Structured project sections -->
+          <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold">🚀 Generated Project Concept</p>
+
+          <!-- Project Name banner -->
+          <div id="projectNameBanner" class="hidden px-4 py-3 bg-gradient-to-r from-forge-red/20 to-red-900/20 border border-forge-red/30 rounded-xl">
+            <p class="text-xs text-forge-red font-bold uppercase tracking-wider mb-1">Project Name</p>
+            <p id="projectNameText" class="text-white font-black text-xl"></p>
+          </div>
+
+          <!-- Problem -->
+          <div id="problemBlock" class="hidden bg-black/40 rounded-xl p-4">
+            <p class="text-xs text-forge-red font-bold uppercase tracking-wider mb-2">❗ Problem</p>
+            <p id="problemText" class="text-sm text-gray-300 leading-relaxed"></p>
+          </div>
+
+          <!-- Solution -->
+          <div id="solutionBlock" class="hidden bg-black/40 rounded-xl p-4">
+            <p class="text-xs text-forge-red font-bold uppercase tracking-wider mb-2">✅ Solution</p>
+            <p id="solutionText" class="text-sm text-gray-300 leading-relaxed"></p>
+          </div>
+
+          <!-- Target Users -->
+          <div id="targetBlock" class="hidden bg-black/40 rounded-xl p-4">
+            <p class="text-xs text-forge-red font-bold uppercase tracking-wider mb-2">👥 Target Users</p>
+            <p id="targetText" class="text-sm text-gray-300 leading-relaxed"></p>
+          </div>
+
+          <!-- Key Features -->
+          <div id="featuresBlock" class="hidden bg-black/40 rounded-xl p-4">
+            <p class="text-xs text-forge-red font-bold uppercase tracking-wider mb-2">⚡ Key Features</p>
+            <ul id="featuresList" class="text-sm text-gray-300 space-y-1.5 list-none"></ul>
+          </div>
+
+          <!-- Why It Works -->
+          <div id="whyBlock" class="hidden bg-black/40 rounded-xl p-4">
+            <p class="text-xs text-forge-red font-bold uppercase tracking-wider mb-2">💡 Why This Works</p>
+            <p id="whyText" class="text-sm text-gray-300 leading-relaxed"></p>
+          </div>
+
+          <!-- MVP Roadmap -->
+          <div id="roadmapBlock" class="hidden bg-black/40 rounded-xl p-4">
+            <p class="text-xs text-forge-red font-bold uppercase tracking-wider mb-2">🗓️ MVP Roadmap</p>
+            <div id="roadmapList" class="space-y-2"></div>
+          </div>
+
+          <!-- Fallback raw project (if parsing fails) -->
+          <div id="projectFallback" class="hidden">
             <div id="projectBody" class="result-body text-sm bg-black/40 rounded-xl p-4"></div>
           </div>
+
         </div>
       </div>
 
@@ -400,6 +455,7 @@
 const BASE = "http://127.0.0.1:8000";
 const TYPE_ICONS = { idea:"💡", note:"📝", link:"🔗", problem:"❗", solution:"✅", project:"🚀" };
 
+// ── Markdown → HTML (minimal) ──────────────────────────────────────────
 function md(text) {
   if (!text) return "";
   return text
@@ -411,6 +467,25 @@ function md(text) {
     .replace(/\n/g, '<br/>');
 }
 
+// ── Parse structured project text into named sections ─────────────────
+function parseProject(text) {
+  const sections = {};
+  const headers = [
+    "Project Name","Problem","Solution","Target Users",
+    "Key Features","Why This Idea Works","MVP Roadmap"
+  ];
+  headers.forEach((h, i) => {
+    const next = headers[i + 1];
+    const re = new RegExp(
+      `\\*\\*${h}\\*\\*\\s*\\n([\\s\\S]*?)${next ? `(?=\\*\\*${next}\\*\\*)` : "$"}`, "i"
+    );
+    const m = text.match(re);
+    sections[h] = m ? m[1].trim() : null;
+  });
+  return sections;
+}
+
+// ── Loading state ──────────────────────────────────────────────────────
 function showLoading(msg) {
   document.getElementById("emptyState").classList.add("hidden");
   const rc = document.getElementById("resultsContent");
@@ -419,7 +494,6 @@ function showLoading(msg) {
   ls.classList.remove("hidden"); ls.classList.add("flex");
   document.getElementById("loadingMsg").textContent = msg;
 }
-
 function hideLoading() {
   const ls = document.getElementById("loadingState");
   ls.classList.add("hidden"); ls.classList.remove("flex");
@@ -431,6 +505,7 @@ function setSaveStatus(msg, cls = "text-gray-600") {
   el.textContent = msg;
 }
 
+// ── Load memory list + nav badge ───────────────────────────────────────
 async function loadMemories() {
   try {
     const res = await fetch(`${BASE}/memories`);
@@ -453,39 +528,39 @@ async function loadMemories() {
 
 async function updateStatsBadge() {
   try {
-    const res  = await fetch(`${BASE}/stats`);
+    const res = await fetch(`${BASE}/stats`);
     const data = await res.json();
-    const n    = data.memory_count ?? 0;
+    const n = data.memory_count ?? 0;
     const badge = document.getElementById("statsBadge");
     if (badge) badge.textContent = `${n} idea${n !== 1 ? "s" : ""} stored`;
   } catch {}
 }
 
+// ── Save a single idea ─────────────────────────────────────────────────
 async function saveIdea() {
   const text = document.getElementById("ideaInput").value.trim();
   if (!text) return;
-  if (text.length > 500) { setSaveStatus("❌ Too long — max 500 characters.", "text-red-400"); return; }
+  if (text.length > 500) { setSaveStatus("❌ Too long — max 500 chars.", "text-red-400"); return; }
   const type = document.getElementById("ideaType").value;
   const btn  = document.getElementById("saveBtn");
   btn.disabled = true;
   document.getElementById("saveBtnText").textContent = "Saving…";
   try {
     const res = await fetch(`${BASE}/add`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, type }),
     });
     if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.detail || `HTTP ${res.status}`); }
     const data = await res.json();
     setSaveStatus(`✅ Saved! (${data.memory_count ?? "?"} in memory)`, "text-forge-red");
     document.getElementById("ideaInput").value = "";
-    await loadMemories();
-    updateStatsBadge();
+    await loadMemories(); updateStatsBadge();
   } catch (e) { setSaveStatus(`❌ ${e.message}`, "text-red-400"); }
   btn.disabled = false;
   document.getElementById("saveBtnText").textContent = "Save Idea";
 }
 
+// ── Generate project (main AI call) ───────────────────────────────────
 async function generateProject() {
   const question = document.getElementById("questionInput").value.trim();
   if (!question) return;
@@ -504,28 +579,12 @@ async function generateProject() {
 
   try {
     const res = await fetch(`${BASE}/ask`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question }),
     });
     clearInterval(stageTimer);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-
-    if ((data.project || "").includes("error:") && (data.project || "").includes("401")) {
-      hideLoading();
-      document.getElementById("emptyState").innerHTML =
-        `<div class="text-center px-4">
-          <div class="text-3xl mb-3">🔑</div>
-          <p class="text-forge-red font-bold text-sm mb-1">OpenAI API key missing or invalid</p>
-          <p class="text-gray-500 text-xs">Add your key to <code class="text-forge-red">backend/.env</code><br/>then restart the server.</p>
-        </div>`;
-      document.getElementById("emptyState").classList.remove("hidden");
-      btn.disabled = false;
-      document.getElementById("askBtnText").textContent = "Generate Project";
-      return;
-    }
-
     hideLoading();
     renderResults(data);
     const nodes = (data.related_ideas || []).map(t => ({ text: t }));
@@ -535,27 +594,95 @@ async function generateProject() {
     clearInterval(stageTimer);
     hideLoading();
     document.getElementById("emptyState").innerHTML =
-      `<p class="text-red-400 text-sm px-4 text-center">❌ ${e.message}<br/><span class="text-xs text-gray-600">Is the backend running at port 8000?</span></p>`;
+      `<p class="text-red-400 text-sm px-4 text-center">❌ ${e.message}<br/>
+       <span class="text-xs text-gray-600">Is the backend running at port 8000?</span></p>`;
     document.getElementById("emptyState").classList.remove("hidden");
   }
   btn.disabled = false;
   document.getElementById("askBtnText").textContent = "Generate Project";
 }
 
+// ── Render structured results ─────────────────────────────────────────
 function renderResults(data) {
+  // Theme
   document.getElementById("themeText").textContent = data.theme || "—";
+
+  // Retrieved memories
   const ideas = data.related_ideas || [];
   document.getElementById("relatedIdeas").innerHTML = ideas.length
     ? ideas.map(i => `<span class="text-xs bg-forge-red/10 border border-forge-red/20 rounded-full px-3 py-1 text-gray-300">${i}</span>`).join("")
     : '<span class="text-xs text-gray-600 italic">none retrieved</span>';
-  document.getElementById("insightBody").innerHTML  = md(data.insight || "");
-  document.getElementById("projectBody").innerHTML  = md(data.project || "");
+
+  // Insight
+  document.getElementById("insightBody").innerHTML = md(data.insight || "");
+
+  // Parse structured project sections
+  const s = parseProject(data.project || "");
+  let parsed = false;
+
+  if (s["Project Name"]) {
+    document.getElementById("projectNameText").textContent = s["Project Name"];
+    document.getElementById("projectNameBanner").classList.remove("hidden");
+    parsed = true;
+  }
+  if (s["Problem"]) {
+    document.getElementById("problemText").textContent = s["Problem"];
+    document.getElementById("problemBlock").classList.remove("hidden");
+  }
+  if (s["Solution"]) {
+    document.getElementById("solutionText").textContent = s["Solution"];
+    document.getElementById("solutionBlock").classList.remove("hidden");
+  }
+  if (s["Target Users"]) {
+    document.getElementById("targetText").textContent = s["Target Users"];
+    document.getElementById("targetBlock").classList.remove("hidden");
+  }
+  if (s["Key Features"]) {
+    const items = s["Key Features"].split("\n").filter(l => l.trim().match(/^[-•*]/));
+    document.getElementById("featuresList").innerHTML = items.map(f =>
+      `<li class="flex items-start gap-2">
+        <span class="text-forge-red mt-0.5">▸</span>
+        <span>${f.replace(/^[-•*]\s*/, "")}</span>
+      </li>`).join("");
+    document.getElementById("featuresBlock").classList.remove("hidden");
+  }
+  if (s["Why This Idea Works"]) {
+    document.getElementById("whyText").textContent = s["Why This Idea Works"];
+    document.getElementById("whyBlock").classList.remove("hidden");
+  }
+  if (s["MVP Roadmap"]) {
+    const weeks = s["MVP Roadmap"].split("\n").filter(l => l.trim().match(/^Week/i));
+    document.getElementById("roadmapList").innerHTML = weeks.map((w, i) => {
+      const [label, ...rest] = w.split(":");
+      return `<div class="flex gap-3 items-start">
+        <span class="shrink-0 w-16 text-xs font-bold text-forge-red pt-0.5">${label.trim()}</span>
+        <span class="text-xs text-gray-400 leading-relaxed">${rest.join(":").trim()}</span>
+      </div>`;
+    }).join("");
+    document.getElementById("roadmapBlock").classList.remove("hidden");
+  }
+
+  // If parsing found nothing, fall back to raw markdown
+  if (!parsed) {
+    document.getElementById("projectBody").innerHTML = md(data.project || "");
+    document.getElementById("projectFallback").classList.remove("hidden");
+  }
+
+  // Show results panel
   const rc = document.getElementById("resultsContent");
   rc.classList.remove("hidden"); rc.classList.add("flex");
   document.getElementById("emptyState").classList.add("hidden");
+
+  // Stagger-animate each result card
+  gsap.from("#resultsContent > *", { opacity:0, y:18, duration:0.45, stagger:0.08, ease:"power2.out" });
 }
 
+// ── Clear results ──────────────────────────────────────────────────────
 function clearResults() {
+  ["projectNameBanner","problemBlock","solutionBlock","targetBlock",
+   "featuresBlock","whyBlock","roadmapBlock","projectFallback"].forEach(id => {
+    document.getElementById(id)?.classList.add("hidden");
+  });
   const rc = document.getElementById("resultsContent");
   rc.classList.add("hidden"); rc.classList.remove("flex");
   const es = document.getElementById("emptyState");
@@ -567,18 +694,13 @@ function clearResults() {
   clearCanvas();
 }
 
-const FITNESS_IDEAS = [
-  { text: "AI gym trainer", type: "idea" },
-  { text: "people struggle with gym consistency", type: "problem" },
-  { text: "beginner workout confusion", type: "problem" },
-  { text: "fitness habit tracking", type: "idea" },
-  { text: "AI habit reminders", type: "idea" },
-];
+// ── Demo loaders ───────────────────────────────────────────────────────
 const EDU_IDEAS = [
-  { text: "voice assistant for education", type: "idea" },
-  { text: "gamified learning app", type: "idea" },
-  { text: "students lose focus in online classes", type: "problem" },
-  { text: "AI tutoring for kids", type: "idea" },
+  { text: "voice assistant for education",            type: "idea"    },
+  { text: "gamified learning app",                    type: "idea"    },
+  { text: "students lose focus in online classes",    type: "problem" },
+  { text: "AI tutoring for kids",                     type: "idea"    },
+  { text: "personalized learning pace",               type: "idea"    },
 ];
 
 async function loadBatch(ideas, question) {
@@ -592,16 +714,29 @@ async function loadBatch(ideas, question) {
 }
 
 async function loadDemo() {
-  setSaveStatus("⏳ Loading fitness demo…", "text-forge-red");
+  setSaveStatus("⏳ Loading demo…", "text-forge-red");
   try {
-    await fetch(`${BASE}/demo`, { method: "POST" });
+    const res  = await fetch(`${BASE}/demo`, { method: "POST" });
+    const data = await res.json();
     await loadMemories(); updateStatsBadge();
-    document.getElementById("questionInput").value = "fitness startup idea";
+    // Use the question the backend locked in — always "fitness startup idea"
+    document.getElementById("questionInput").value = data.demo_question || "fitness startup idea";
     setSaveStatus("✅ Demo loaded — click Generate Project!", "text-forge-red");
-  } catch { await loadBatch(FITNESS_IDEAS, "fitness startup idea"); }
+  } catch {
+    // Hard fallback — never crash the demo
+    await loadBatch([
+      { text: "AI gym trainer",                           type: "idea"    },
+      { text: "people struggle with fitness consistency", type: "problem" },
+      { text: "beginner workout confusion",               type: "problem" },
+      { text: "habit tracking for workouts",              type: "idea"    },
+      { text: "AI voice coaching for fitness",            type: "idea"    },
+    ], "fitness startup idea");
+  }
 }
+
 async function loadEduDemo() { await loadBatch(EDU_IDEAS, "education startup idea"); }
 
+// ── Connection graph canvas ────────────────────────────────────────────
 function drawGraph(items) {
   const canvas = document.getElementById("graphCanvas");
   const ctx = canvas.getContext("2d");
@@ -622,21 +757,24 @@ function drawGraph(items) {
     }
   }
   nodes.forEach(n => {
-    ctx.beginPath(); ctx.arc(n.x, n.y, n.isQuery?7:5, 0, Math.PI*2);
+    ctx.beginPath(); ctx.arc(n.x, n.y, n.isQuery ? 7 : 5, 0, Math.PI*2);
     ctx.fillStyle = n.isQuery ? "#7f0000" : "#ff1f1f"; ctx.fill();
     ctx.font = "9px system-ui"; ctx.fillStyle = "#6b7280"; ctx.textAlign = "center";
     ctx.fillText(n.label, n.x, n.y+16);
   });
   gsap.from("#graphCanvas", { scale:0.85, opacity:0, duration:0.9, ease:"power3.out" });
 }
+
 function clearCanvas() {
   const c = document.getElementById("graphCanvas");
-  c.getContext("2d").clearRect(0,0,c.width,c.height);
+  c.getContext("2d").clearRect(0, 0, c.width, c.height);
 }
 
-document.getElementById("ideaInput")?.addEventListener("keydown", e => { if(e.key==="Enter") saveIdea(); });
-document.getElementById("questionInput")?.addEventListener("keydown", e => { if(e.key==="Enter"&&e.metaKey) generateProject(); });
+// ── Keyboard shortcuts ─────────────────────────────────────────────────
+document.getElementById("ideaInput")?.addEventListener("keydown",    e => { if (e.key === "Enter") saveIdea(); });
+document.getElementById("questionInput")?.addEventListener("keydown", e => { if (e.key === "Enter" && e.metaKey) generateProject(); });
 
+// ── Boot ───────────────────────────────────────────────────────────────
 loadMemories();
 updateStatsBadge();
 </script>

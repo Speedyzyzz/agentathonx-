@@ -16,14 +16,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Demo seed data ─────────────────────────────────────────────────────
+# ── Demo seed data — LOCKED, produces FitGuide AI concept ─────────────
 DEMO_IDEAS = [
-    {"text": "AI gym trainer",                           "type": "idea"},
+    {"text": "AI gym trainer",                        "type": "idea"},
     {"text": "people struggle with fitness consistency", "type": "problem"},
-    {"text": "beginner workout confusion",               "type": "problem"},
-    {"text": "fitness habit tracking app",               "type": "idea"},
-    {"text": "AI habit reminders via SMS",               "type": "idea"},
+    {"text": "beginner workout confusion",            "type": "problem"},
+    {"text": "habit tracking for workouts",           "type": "idea"},
+    {"text": "AI voice coaching for fitness",         "type": "idea"},
 ]
+DEMO_QUESTION = "fitness startup idea"
 
 
 # ── Models ────────────────────────────────────────────────────────────
@@ -63,9 +64,27 @@ def ask_question(data: Query):
 
     related = search_memory(data.question, n_results=8)
 
-    theme   = infer_theme(related)
-    insight = generate_insight(related, question=data.question)
-    project = generate_project(related, question=data.question, theme=theme)
+    # ── AI calls — each isolated so one failure never kills the response ──
+    try:
+        theme = infer_theme(related)
+        if "error:" in theme:
+            raise ValueError(theme)
+    except Exception:
+        theme = "AI unavailable — showing idea connections only"
+
+    try:
+        insight = generate_insight(related, question=data.question)
+        if "error:" in insight:
+            raise ValueError(insight)
+    except Exception:
+        insight = "AI unavailable — showing idea connections only"
+
+    try:
+        project = generate_project(related, question=data.question, theme=theme)
+        if "error:" in project:
+            raise ValueError(project)
+    except Exception:
+        project = "AI unavailable — showing idea connections only"
 
     return {
         "theme":         theme,
@@ -88,14 +107,19 @@ def stats():
 
 @app.post("/demo")
 def load_demo():
-    """Seed the memory with demo fitness ideas — idempotent (skips duplicates)."""
+    """Seed memory with the locked demo dataset — idempotent. Returns the demo question too."""
     existing_texts = {m["text"].strip().lower() for m in get_all_memories()}
     added = 0
     for idea in DEMO_IDEAS:
         if idea["text"].strip().lower() not in existing_texts:
             add_memory(idea["text"], entry_type=idea["type"])
             added += 1
-    return {"status": "demo loaded", "ideas_added": added, "memory_count": memory_count()}
+    return {
+        "status":        "demo loaded",
+        "ideas_added":   added,
+        "memory_count":  memory_count(),
+        "demo_question": DEMO_QUESTION,
+    }
 
 
 @app.get("/health")

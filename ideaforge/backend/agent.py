@@ -96,19 +96,20 @@ The user has stored these ideas:
 {"Core theme: " + theme if theme else ""}
 {"User question: " + question if question else ""}
 
-Analyze the ideas and produce a full project concept using EXACTLY this format:
+Produce a full project concept using EXACTLY this format with these EXACT section headers.
+Do not skip any section. Do not add extra sections.
 
 **Project Name**
-A catchy, memorable name.
+One catchy, memorable product name on this line only.
 
 **Problem**
-The real-world problem being solved (2-3 sentences).
+2-3 sentences on the real-world problem.
 
 **Solution**
-The AI-powered solution (2-3 sentences).
+2-3 sentences on the AI-powered solution.
 
 **Target Users**
-Who benefits from this (1 sentence).
+1 sentence describing who benefits.
 
 **Key Features**
 - Feature 1
@@ -117,14 +118,14 @@ Who benefits from this (1 sentence).
 - Feature 4
 
 **Why This Idea Works**
-Why combining these ideas is powerful (2-3 sentences).
+2-3 sentences on why combining these ideas is powerful.
 
 **MVP Roadmap**
 Week 1: ...
 Week 2: ...
 Week 3: ...
 
-Be specific, practical, and exciting."""
+Be specific, practical, and exciting. No preamble, no sign-off."""
 
     return _chat(
         [{"role": "user", "content": prompt}],
