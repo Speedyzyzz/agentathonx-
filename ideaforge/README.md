@@ -2,32 +2,58 @@
 
 > "ChatGPT answers questions. IdeaForge connects your thoughts and turns them into real projects."
 
-An AI-powered **Second Brain** that stores your ideas, discovers hidden semantic connections, and generates full startup concepts — using ChromaDB vector memory and GPT-4o-mini reasoning.
+An AI-powered **Second Brain** that stores your ideas, discovers hidden semantic connections, and generates full startup concepts — using **ChromaDB vector memory** and **Llama-3.3-70b** (via Groq) for reasoning.
 
 ---
 
-## 🏗️ Architecture
+## 🤖 AI Pipeline
+
+Ideas flow through four deterministic stages — no black box, no hallucination loop:
 
 ```
-┌─────────────────────────────────────┐
-│   Browser  (HTML + Tailwind + GSAP) │
-│  Add Idea │ Memory Bank │ Ask AI    │
-│  Connection Graph │ AI Response     │
-└──────────────┬──────────────────────┘
-               │  HTTP (fetch)
-               ▼
-┌─────────────────────────────────────┐
-│          FastAPI  Backend           │
-│                                     │
-│  main.py   — REST API + CORS        │
-│  memory.py — ChromaDB vector store  │
-│  agent.py  — GPT-4o-mini reasoning  │
-└───────────────┬─────────────────────┘
-                │
-        ┌───────┴───────┐
-        ▼               ▼
-   ChromaDB          OpenAI
- (vector store)   (gpt-4o-mini)
+Raw Ideas
+   ↓
+Vector Memory  (ChromaDB — stores each idea as a semantic embedding)
+   ↓
+Semantic Retrieval  (cosine similarity search, top-8 results)
+   ↓
+LLM Reasoning  (Llama-3.3-70b via Groq — theme + insight + project)
+   ↓
+Structured Startup Concept + MVP Roadmap
+```
+
+Each stage is **independently observable** in the UI:
+- Memory Bank shows all stored vectors
+- AI Reasoning panel shows which vectors were retrieved + relevance score bars
+- Connection Insight explains the pattern the AI found
+- Generated Project renders every structured section individually
+
+---
+
+## 🏗️ System Architecture
+
+```
+┌─────────────────────────────────────────┐
+│   Browser  (HTML + Tailwind CSS + GSAP) │
+│                                         │
+│  Add Idea │ Memory Bank │ Ask AI        │
+│  AI Reasoning │ Connection Graph        │
+│  Generated Project + MVP Roadmap        │
+└──────────────────┬──────────────────────┘
+                   │  HTTP (fetch)
+                   ▼
+┌─────────────────────────────────────────┐
+│           FastAPI  Backend              │
+│                                         │
+│  main.py   — REST API + CORS            │
+│  memory.py — ChromaDB vector store      │
+│  agent.py  — Llama-3.3-70b reasoning    │
+└──────────────┬──────────────────────────┘
+               │
+      ┌────────┴────────┐
+      ▼                 ▼
+  ChromaDB           Groq API
+(vector store)   (llama-3.3-70b-versatile)
 ```
 
 ---
@@ -36,12 +62,76 @@ An AI-powered **Second Brain** that stores your ideas, discovers hidden semantic
 
 | Step | Action |
 |------|--------|
-| 1. **Store** | User saves ideas, notes, problems, or solutions via `/add` — instant, no AI call |
-| 2. **Search** | `/ask` runs semantic vector search (n=8) to retrieve the most related memories |
-| 3. **Theme** | LLM infers the single core theme connecting the ideas |
+| 1. **Store** | User saves ideas via `/add` — instant vector embedding, no AI call, sub-100ms |
+| 2. **Retrieve** | `/ask` runs cosine similarity search (n=8) to find the most semantically related memories |
+| 3. **Theme** | LLM infers the single core theme connecting the retrieved ideas |
 | 4. **Insight** | LLM explains how the ideas connect and what opportunity they reveal |
-| 5. **Generate** | LLM produces a full structured startup concept with features + MVP roadmap |
-| 6. **Visualise** | Canvas graph renders nodes + connections |
+| 5. **Generate** | LLM produces a fully structured startup concept: name, problem, solution, features, MVP roadmap |
+| 6. **Visualise** | Canvas graph renders idea nodes + weighted connections |
+
+---
+
+## 🎬 Example Flow
+
+A user adds several rough ideas:
+
+- AI gym trainer
+- workout habit tracking
+- beginner workout confusion
+- voice coaching for fitness
+- people struggle with consistency
+
+IdeaForge stores each idea as a **vector embedding** in ChromaDB. When the user asks a question, it retrieves the most semantically relevant ones via cosine similarity.
+
+**User asks:** `"fitness startup idea"`
+
+**Retrieved memories (AI Reasoning panel)**
+
+| Memory | Type | Relevance |
+|--------|------|-----------|
+| AI gym trainer | idea | ████████████ 100% |
+| voice coaching for fitness | idea | █████████░░░ 78% |
+| people struggle with consistency | problem | ███████░░░░░ 64% |
+| beginner workout confusion | problem | ██████░░░░░░ 55% |
+| workout habit tracking | idea | █████░░░░░░░ 48% |
+
+These retrieved memories become the **entire reasoning context** passed to the LLM — no extra prompting, no static injection.
+
+---
+
+### AI Response
+
+IdeaForge generates a fully structured startup concept:
+
+**🎯 Theme**
+> Personal AI Fitness Coaching
+
+**🔗 Connection Insight**
+> Many people struggle to stay consistent with workouts because they lack personalised guidance, accountability, and real-time feedback. These ideas collectively point to an AI system that acts as a personal trainer — adapting to user behaviour, tracking habits, and coaching in real time.
+
+**Project Name**
+> FitForge AI
+
+**❗ Problem**
+> Most fitness apps provide static workout plans and require users to stay self-motivated. Beginners especially struggle with confusion about where to start, leading to high dropout rates within the first few weeks.
+
+**✅ Solution**
+> An AI-driven fitness assistant that provides real-time voice coaching, tracks workout habits, and continuously adapts recommendations based on user behaviour and progress.
+
+**⚡ Key Features**
+- AI voice coaching during workouts
+- Personalised workout generation
+- Habit tracking and progress feedback
+- Beginner-friendly onboarding flow
+- Smart reminders and motivation nudges
+
+**🗓️ MVP Roadmap**
+
+| Week | Milestone |
+|------|-----------|
+| Week 1 | Build workout generator and basic habit tracking |
+| Week 2 | Add AI voice coaching and progress analytics |
+| Week 3 | Release prototype with personalised adaptive plans |
 
 ---
 
@@ -49,10 +139,11 @@ An AI-powered **Second Brain** that stores your ideas, discovers hidden semantic
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | HTML5, Tailwind CSS, GSAP 3, Canvas API |
+| Frontend | HTML5, Tailwind CSS v3, GSAP 3.12, Canvas API |
 | Backend | Python 3.13, FastAPI, Uvicorn |
 | Memory | ChromaDB (in-memory vector embeddings) |
-| AI | OpenAI GPT-4o-mini |
+| LLM | Llama-3.3-70b-versatile via Groq API |
+| HTTP Client | OpenAI SDK (pointed at `api.groq.com/openai/v1`) |
 
 ---
 
@@ -77,7 +168,7 @@ pip install -r requirements.txt
 Create `backend/.env`:
 
 ```
-OPENAI_API_KEY=sk-your-key-here
+GROQ_API_KEY=your-groq-key-here
 ```
 
 Start the server:
@@ -90,6 +181,8 @@ Backend: **http://127.0.0.1:8000**
 API docs: **http://127.0.0.1:8000/docs**
 
 ### 3. Frontend
+
+Open `frontend/index.html` directly in a browser — or serve it:
 
 ```bash
 cd ../frontend
@@ -105,8 +198,9 @@ Open **http://localhost:3000**
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/add` | Store an idea instantly (no AI, sub-100ms) |
-| `POST` | `/ask` | Search memory + run full AI reasoning pipeline |
-| `POST` | `/demo` | Seed 5 fitness demo ideas (idempotent) |
+| `POST` | `/ask` | Semantic search + full AI reasoning pipeline |
+| `POST` | `/demo/{type}` | Seed a named demo dataset (fitness / education / startup / productivity) |
+| `POST` | `/clear` | Wipe all memories |
 | `GET`  | `/memories` | List all stored memories (newest first) |
 | `GET`  | `/stats` | Live memory count for UI badge |
 | `GET`  | `/health` | Health check |
@@ -126,62 +220,79 @@ curl -X POST http://127.0.0.1:8000/add \
 curl -X POST http://127.0.0.1:8000/ask \
   -H "Content-Type: application/json" \
   -d '{"question": "fitness startup idea"}'
-# → { "theme": "...", "related_ideas": [...], "insight": "...", "project": "..." }
 ```
+
+Response:
+```json
+{
+  "theme": "Personal AI Fitness Coaching",
+  "related_ideas": ["AI gym trainer", "..."],
+  "memories_used": [
+    { "text": "AI gym trainer", "type": "idea", "distance": 0.31 }
+  ],
+  "insight": "These ideas share a core theme of...",
+  "project": "**Project Name**\nFitForge AI\n\n**Problem**\n..."
+}
+```
+
+### POST `/demo/{type}`
+
+```bash
+curl -X POST http://127.0.0.1:8000/demo/fitness
+# → { "status": "loaded", "type": "fitness", "count": 5, "question": "fitness startup idea" }
+```
+
+Available types: `fitness` · `education` · `startup` · `productivity`
 
 ---
 
-## 🎬 Demo Flow (2 minutes)
+## 🎮 Demo Flow
 
-### One-click seed (recommended for demo)
+### One-click (recommended for judges)
 
-1. Click **🏋️ Load fitness ideas** in the workspace
-2. Type `fitness startup idea` in Ask AI
-3. Click **Generate Project**
+1. Open `frontend/index.html`
+2. Memory bank is **pre-loaded** with 5 fitness ideas on arrival
+3. Click any demo button: **🏋️ Fitness AI**, **🎓 Education AI**, **🚀 Startup Builder**, or **⚡ Productivity AI**
+4. Watch the 5-stage reasoning pipeline run live
+5. Read the structured startup concept that appears
 
 ### Manual flow
 
-Add these ideas:
+Add ideas in the workspace:
 
 ```
 💡 AI gym trainer
 ❗ people struggle with gym consistency
 ❗ beginner workout confusion
 💡 fitness habit tracking
-💡 AI habit reminders
+💡 AI voice coaching
 ```
 
 Ask: **`fitness startup idea`**
-
-Expected output:
-- **Theme** — AI-Powered Fitness Coaching
-- **Retrieved Ideas** — all ideas shown as tags
-- **Connection Insight** — how they relate + opportunity
-- **Project Concept** — name, problem, solution, features, MVP roadmap
-- **Graph** — nodes connected in canvas visualisation
 
 ---
 
 ## 🧠 Agent Design
 
-Three focused functions in `agent.py`:
+Three focused functions in `agent.py`, each with `timeout=30` and a static fallback that always parses correctly:
 
-| Function | Purpose |
-|----------|---------|
-| `infer_theme()` | Returns a 2–6 word theme label |
-| `generate_insight()` | Explains connections + hidden opportunity |
-| `generate_project()` | Full structured startup concept |
+| Function | Input | Output |
+|----------|-------|--------|
+| `infer_theme()` | Retrieved memories | 2–6 word theme label |
+| `generate_insight()` | Retrieved memories + question | Paragraph explaining connections + opportunity |
+| `generate_project()` | Retrieved memories + question + theme | Full structured startup concept with `**Section**` headers |
 
-All calls use `timeout=20` and `try/except` — the demo **never crashes**.
+All Groq calls use the OpenAI SDK with `base_url="https://api.groq.com/openai/v1"` — no custom HTTP client needed.
 
 ---
 
 ## 🔒 Safeguards
 
-- `/add` rejects ideas > 500 characters with a clear error
-- All OpenAI calls return a graceful fallback on any error
-- `/demo` is idempotent — repeated calls won't create duplicates
-- Search deduplicates results before passing to LLM
+- `/add` rejects ideas > 500 characters with HTTP 400
+- All LLM calls return a static structured fallback on any error — the demo **never crashes**
+- `/demo/{type}` always wipes memory before reseeding — idempotent, no duplicates
+- ChromaDB search deduplicates results before passing to the LLM
+- Frontend reads memory count from `GET /stats` API directly — never from stale DOM text
 
 ---
 
@@ -191,23 +302,15 @@ All calls use `timeout=20` and `try/except` — the demo **never crashes**.
 ideaforge/
 ├── README.md
 ├── backend/
-│   ├── main.py          # FastAPI routes
+│   ├── main.py          # FastAPI routes + demo datasets
 │   ├── memory.py        # ChromaDB vector store
-│   ├── agent.py         # OpenAI reasoning pipeline
+│   ├── agent.py         # Groq / Llama-3.3-70b reasoning pipeline
 │   ├── requirements.txt
-│   └── .env             # OPENAI_API_KEY (not committed)
+│   └── .env             # GROQ_API_KEY (not committed)
 └── frontend/
     └── index.html       # Full SPA — landing page + live workspace
 ```
 
 ---
 
-## 💬 Pitch Line
-
-> *"IdeaForge is not a chatbot. It's a digital thinking partner — it remembers everything you've ever thought, finds the connections you missed, and turns your scattered ideas into real startup concepts."*
-
----
-
-## 📄 License
-
-MIT — built for Agentathon X by **Speedyzyzz**
+*Built for AgentathonX by [Speedyzyzz](https://github.com/Speedyzyzz)*
