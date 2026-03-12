@@ -16,15 +16,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Demo seed data — LOCKED, always produces the same fitness concept ──
-DEMO_IDEAS = [
-    {"text": "AI gym trainer",                           "type": "idea"},
-    {"text": "people struggle with fitness consistency", "type": "problem"},
-    {"text": "beginner workout confusion",               "type": "problem"},
-    {"text": "habit tracking for workouts",              "type": "idea"},
-    {"text": "AI voice coaching for fitness",            "type": "idea"},
-]
-DEMO_QUESTION = "fitness startup idea"
+# ── Deterministic demo datasets — each produces a reliable AI output ──
+DEMO_SETS = {
+    "fitness": {
+        "ideas": [
+            {"text": "AI gym trainer",                            "type": "idea"},
+            {"text": "people struggle with fitness consistency",  "type": "problem"},
+            {"text": "beginner workout confusion",                "type": "problem"},
+            {"text": "habit tracking for workouts",              "type": "idea"},
+            {"text": "AI voice coaching for fitness",            "type": "idea"},
+        ],
+        "question": "fitness startup idea",
+    },
+    "education": {
+        "ideas": [
+            {"text": "students lose focus in online classes",     "type": "problem"},
+            {"text": "AI tutoring for kids",                     "type": "idea"},
+            {"text": "personalized learning pace",               "type": "idea"},
+            {"text": "voice assistant for education",            "type": "idea"},
+            {"text": "gamified learning app",                    "type": "idea"},
+        ],
+        "question": "education startup idea",
+    },
+    "startup": {
+        "ideas": [
+            {"text": "founders struggle validating ideas",        "type": "problem"},
+            {"text": "AI that generates MVP plans",              "type": "idea"},
+            {"text": "tools for startup market research",        "type": "idea"},
+            {"text": "automated pitch deck builder",             "type": "idea"},
+            {"text": "AI competitor analysis tool",             "type": "idea"},
+        ],
+        "question": "startup tools idea",
+    },
+    "productivity": {
+        "ideas": [
+            {"text": "people procrastinate on tasks",             "type": "problem"},
+            {"text": "AI task prioritization assistant",         "type": "idea"},
+            {"text": "calendar auto scheduling",                 "type": "idea"},
+            {"text": "deep focus session tracker",               "type": "idea"},
+            {"text": "AI productivity coach",                    "type": "idea"},
+        ],
+        "question": "productivity startup idea",
+    },
+}
 
 
 # ── Models ────────────────────────────────────────────────────────────
@@ -89,16 +123,34 @@ def stats():
     return {"memory_count": memory_count()}
 
 
+@app.post("/demo/{demo_type}")
+def load_demo_typed(demo_type: str):
+    """Wipe memory and seed a named demo dataset. Returns the preset question."""
+    if demo_type not in DEMO_SETS:
+        raise HTTPException(status_code=404, detail=f"Unknown demo type '{demo_type}'. Available: {list(DEMO_SETS.keys())}")
+    clear_all_memories()
+    preset = DEMO_SETS[demo_type]
+    for idea in preset["ideas"]:
+        add_memory(idea["text"], entry_type=idea["type"])
+    return {
+        "status":   "loaded",
+        "type":     demo_type,
+        "count":    len(preset["ideas"]),
+        "question": preset["question"],
+    }
+
+
 @app.post("/demo")
 def load_demo():
-    """Wipe memory, seed the locked fitness demo, return demo_question for the frontend."""
+    """Backward-compat alias — loads the fitness demo."""
     clear_all_memories()
-    for idea in DEMO_IDEAS:
+    preset = DEMO_SETS["fitness"]
+    for idea in preset["ideas"]:
         add_memory(idea["text"], entry_type=idea["type"])
     return {
         "status":        "demo loaded",
-        "count":         len(DEMO_IDEAS),
-        "demo_question": DEMO_QUESTION,
+        "count":         len(preset["ideas"]),
+        "demo_question": preset["question"],
     }
 
 
