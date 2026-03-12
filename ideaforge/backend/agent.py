@@ -1,13 +1,16 @@
-# filepath: /Users/user/AgentathonX/ideaforge/backend/agent.py
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 
-client  = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-MODEL   = "gpt-4o-mini"
-TIMEOUT = 20  # seconds — prevents demo freezes
+# Groq is OpenAI-compatible — just swap base_url and model
+client  = OpenAI(
+    api_key=os.getenv("GROQ_API_KEY"),
+    base_url="https://api.groq.com/openai/v1",
+)
+MODEL   = "llama-3.3-70b-versatile"   # fast + free on Groq
+TIMEOUT = 30  # seconds
 
 
 # ── Helpers ───────────────────────────────────────────────────────────
