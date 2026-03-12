@@ -17,7 +17,7 @@ def add_memory(text: str, entry_type: str = "idea") -> str:
 
 
 def search_memory(query: str, n_results: int = 8) -> list[dict]:
-    """Return the top-n most semantically related memories."""
+    """Return the top-n most semantically related memories (deduped by text)."""
     count = collection.count()
     if count == 0:
         return []
@@ -25,12 +25,17 @@ def search_memory(query: str, n_results: int = 8) -> list[dict]:
     n = min(n_results, count)
     results = collection.query(query_texts=[query], n_results=n)
 
+    seen = set()
     memories = []
     for doc, dist, meta in zip(
         results["documents"][0],
         results["distances"][0],
         results["metadatas"][0],
     ):
+        key = doc.strip().lower()
+        if key in seen:
+            continue
+        seen.add(key)
         memories.append({
             "text":     doc,
             "distance": round(dist, 4),

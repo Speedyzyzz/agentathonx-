@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -17,7 +18,7 @@
             'forge-gray': '#121212',
           },
           animation: {
-            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4,0,0.6,1) infinite',
           }
         }
       }
@@ -25,8 +26,8 @@
   </script>
   <style>
     @keyframes glow {
-      0%, 100% { box-shadow: 0 0 15px rgba(255,31,31,.2); }
-      50%       { box-shadow: 0 0 30px rgba(255,31,31,.4); }
+      0%,100% { box-shadow: 0 0 15px rgba(255,31,31,.2); }
+      50%      { box-shadow: 0 0 30px rgba(255,31,31,.4); }
     }
     .hover-glow:hover { animation: glow 2s infinite; border-color: #ff1f1f; }
     .red-mesh {
@@ -64,14 +65,13 @@
       </div>
       <span class="text-xl font-bold tracking-tighter uppercase">IdeaForge</span>
     </div>
-    <div class="hidden md:flex items-center gap-10 text-sm font-medium text-gray-400">
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
       <a class="hover:text-forge-red transition-colors" href="#features">Features</a>
       <a class="hover:text-forge-red transition-colors" href="#how-it-works">How it Works</a>
-      <a class="hover:text-forge-red transition-colors flex items-center gap-2" href="https://github.com/Speedyzyzz/agentathonx-" target="_blank">
+      <a class="hover:text-forge-red transition-colors flex items-center gap-1.5" href="https://github.com/Speedyzyzz/agentathonx-" target="_blank">
         GitHub
         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
       </a>
-      <!-- Live memory counter badge -->
       <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-forge-red/10 border border-forge-red/20 text-forge-red text-xs font-bold font-mono">
         <span class="w-1.5 h-1.5 rounded-full bg-forge-red animate-pulse"></span>
         <span id="statsBadge">0 ideas stored</span>
@@ -106,7 +106,7 @@
       </p>
       <div class="flex flex-wrap gap-4 hero-cta">
         <a href="#workspace">
-          <button id="launchAppBtn" class="px-8 py-4 bg-forge-red text-white font-bold rounded-lg hover:scale-105 transition-transform flex items-center gap-2">
+          <button id="launchAppBtn" class="px-8 py-4 bg-forge-red text-white font-bold rounded-lg flex items-center gap-2">
             START FORGING
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
           </button>
@@ -174,21 +174,21 @@
           <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Memory Engine</h3>
-        <p class="text-gray-400 leading-relaxed">Persistent state management for agents, allowing them to recall context across multiple sessions and complex workflows.</p>
+        <p class="text-gray-400 leading-relaxed">Persistent vector memory for ideas. ChromaDB stores every thought as an embedding — recalled by semantic similarity, not keyword matching.</p>
       </div>
       <div class="feature-card p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
         <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
           <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Idea Connections</h3>
-        <p class="text-gray-400 leading-relaxed">A neural-inspired graph system that links disparate data points into cohesive, actionable project roadmaps automatically.</p>
+        <p class="text-gray-400 leading-relaxed">A neural-inspired graph system that links disparate ideas into cohesive patterns — surfacing relationships you never noticed existed.</p>
       </div>
       <div class="feature-card p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
         <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
           <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Project Generator</h3>
-        <p class="text-gray-400 leading-relaxed">Turn high-level concepts into full-stack scaffolds in seconds. From code to documentation, IdeaForge handles the heavy lifting.</p>
+        <p class="text-gray-400 leading-relaxed">GPT-4o-mini synthesises your connected ideas into a full startup concept — project name, problem, solution, key features, and a 3-week MVP roadmap.</p>
       </div>
     </div>
   </div>
@@ -205,17 +205,17 @@
       <div class="step p-6">
         <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">1</div>
         <h3 class="font-bold text-lg mb-2">Store Ideas</h3>
-        <p class="text-gray-500 text-sm">Save any thought, note, or concept — stored as a vector in ChromaDB memory.</p>
+        <p class="text-gray-500 text-sm">Save any thought, note, or problem — stored instantly as a vector in ChromaDB memory. No AI delay.</p>
       </div>
       <div class="step p-6">
         <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">2</div>
         <h3 class="font-bold text-lg mb-2">AI Finds Connections</h3>
-        <p class="text-gray-500 text-sm">Semantic search retrieves related ideas — AI discovers patterns you missed.</p>
+        <p class="text-gray-500 text-sm">Semantic search retrieves the 8 most related ideas — AI detects the theme and discovers patterns you missed.</p>
       </div>
       <div class="step p-6">
         <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">3</div>
         <h3 class="font-bold text-lg mb-2">Generate Project</h3>
-        <p class="text-gray-500 text-sm">LLM synthesises connected ideas into a full startup concept with features and roadmap.</p>
+        <p class="text-gray-500 text-sm">LLM synthesises connected ideas into a full startup concept with features, roadmap, and pitch.</p>
       </div>
     </div>
   </div>
@@ -231,7 +231,7 @@
         <span class="text-xs font-bold uppercase tracking-widest text-forge-red">Live App</span>
       </div>
       <h2 class="text-4xl font-bold mb-4">Idea Workspace</h2>
-      <p class="text-gray-500 max-w-xl mx-auto">Add your raw ideas, then ask IdeaForge to connect them and generate a project concept.</p>
+      <p class="text-gray-500 max-w-xl mx-auto">Add your raw ideas, then ask IdeaForge to connect them and generate a full project concept.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -255,11 +255,11 @@
               <option value="note">📝 Note</option>
               <option value="problem">❗ Problem</option>
               <option value="solution">✅ Solution</option>
-              <option value="project">🚀 Project</option>
+              <option value="project">�� Project</option>
             </select>
           </div>
           <button id="saveBtn" onclick="saveIdea()"
-            class="w-full py-2.5 rounded-xl bg-forge-red font-bold text-sm hover:scale-[1.02] transition-transform">
+            class="w-full py-2.5 rounded-xl bg-forge-red font-bold text-sm transition-transform">
             <span id="saveBtnText">Save Idea</span>
           </button>
           <p id="saveStatus" class="mt-3 text-xs text-center text-gray-600 min-h-[1rem]"></p>
@@ -296,12 +296,12 @@
             <div class="w-8 h-8 bg-forge-red/10 border border-forge-red/20 rounded-lg flex items-center justify-center text-lg">🔍</div>
             <h3 class="font-bold text-lg">Ask AI</h3>
           </div>
-          <p class="text-xs text-gray-600 mb-4">Describe what you're looking for — IdeaForge retrieves related memories and generates a full project concept.</p>
+          <p class="text-xs text-gray-600 mb-4">Describe what you're building — IdeaForge retrieves related memories and generates a full project concept.</p>
           <textarea id="questionInput" rows="5"
             class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 outline-none focus:border-forge-red focus:ring-1 focus:ring-forge-red transition-colors resize-none"
             placeholder="e.g. fitness startup idea&#10;AI education tool&#10;productivity app for remote teams"></textarea>
           <button id="askBtn" onclick="generateProject()"
-            class="mt-4 w-full py-3 rounded-xl bg-forge-red font-bold text-sm hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+            class="mt-4 w-full py-3 rounded-xl bg-forge-red font-bold text-sm transition-transform flex items-center justify-center gap-2">
             <span id="askBtnText">Generate Project</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
           </button>
@@ -385,12 +385,12 @@
       <span class="text-sm font-bold tracking-tighter uppercase">IdeaForge</span>
     </div>
     <div class="text-gray-500 text-xs font-mono tracking-widest uppercase">
-      Hackathon project by <span class="text-forge-red hover:underline cursor-pointer">Speedyzyzz</span>
+      Hackathon project by <span class="text-forge-red">Speedyzyzz</span>
     </div>
     <div class="flex gap-6 text-gray-500 text-sm">
       <a class="hover:text-white transition-colors" href="https://github.com/Speedyzyzz/agentathonx-" target="_blank">GitHub</a>
       <a class="hover:text-white transition-colors" href="http://127.0.0.1:8000/docs" target="_blank">API Docs</a>
-      <a class="hover:text-white transition-colors" href="#">Status</a>
+      <a class="hover:text-white transition-colors" href="http://127.0.0.1:8000/health" target="_blank">Status</a>
     </div>
   </div>
 </footer>
@@ -405,7 +405,7 @@ function md(text) {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/^#{1,3} (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^[•\-\*] (.+)$/gm, '<li>$1</li>')
+    .replace(/^[\-\*•] (.+)$/gm, '<li>$1</li>')
     .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
     .replace(/\n{2,}/g, '<br/><br/>')
     .replace(/\n/g, '<br/>');
@@ -413,18 +413,16 @@ function md(text) {
 
 function showLoading(msg) {
   document.getElementById("emptyState").classList.add("hidden");
-  document.getElementById("resultsContent").classList.add("hidden");
-  document.getElementById("resultsContent").classList.remove("flex");
+  const rc = document.getElementById("resultsContent");
+  rc.classList.add("hidden"); rc.classList.remove("flex");
   const ls = document.getElementById("loadingState");
-  ls.classList.remove("hidden");
-  ls.classList.add("flex");
+  ls.classList.remove("hidden"); ls.classList.add("flex");
   document.getElementById("loadingMsg").textContent = msg;
 }
 
 function hideLoading() {
   const ls = document.getElementById("loadingState");
-  ls.classList.add("hidden");
-  ls.classList.remove("flex");
+  ls.classList.add("hidden"); ls.classList.remove("flex");
 }
 
 function setSaveStatus(msg, cls = "text-gray-600") {
@@ -466,12 +464,9 @@ async function updateStatsBadge() {
 async function saveIdea() {
   const text = document.getElementById("ideaInput").value.trim();
   if (!text) return;
-  if (text.length > 500) {
-    setSaveStatus("❌ Too long — max 500 characters.", "text-red-400");
-    return;
-  }
+  if (text.length > 500) { setSaveStatus("❌ Too long — max 500 characters.", "text-red-400"); return; }
   const type = document.getElementById("ideaType").value;
-  const btn = document.getElementById("saveBtn");
+  const btn  = document.getElementById("saveBtn");
   btn.disabled = true;
   document.getElementById("saveBtnText").textContent = "Saving…";
   try {
@@ -480,18 +475,13 @@ async function saveIdea() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, type }),
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || `HTTP ${res.status}`);
-    }
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.detail || `HTTP ${res.status}`); }
     const data = await res.json();
     setSaveStatus(`✅ Saved! (${data.memory_count ?? "?"} in memory)`, "text-forge-red");
     document.getElementById("ideaInput").value = "";
     await loadMemories();
     updateStatsBadge();
-  } catch (e) {
-    setSaveStatus(`❌ ${e.message}`, "text-red-400");
-  }
+  } catch (e) { setSaveStatus(`❌ ${e.message}`, "text-red-400"); }
   btn.disabled = false;
   document.getElementById("saveBtnText").textContent = "Save Idea";
 }
@@ -502,21 +492,47 @@ async function generateProject() {
   const btn = document.getElementById("askBtn");
   btn.disabled = true;
   document.getElementById("askBtnText").textContent = "Thinking…";
-  showLoading("Searching memory & generating concept…");
+
+  const stages = ["Searching memory…","Connecting ideas…","Detecting theme…","Generating concept…"];
+  let stageIdx = 0;
+  showLoading(stages[0]);
+  const stageTimer = setInterval(() => {
+    stageIdx = (stageIdx + 1) % stages.length;
+    const el = document.getElementById("loadingMsg");
+    if (el) el.textContent = stages[stageIdx];
+  }, 1800);
+
   try {
     const res = await fetch(`${BASE}/ask`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question }),
     });
+    clearInterval(stageTimer);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+
+    if ((data.project || "").includes("error:") && (data.project || "").includes("401")) {
+      hideLoading();
+      document.getElementById("emptyState").innerHTML =
+        `<div class="text-center px-4">
+          <div class="text-3xl mb-3">🔑</div>
+          <p class="text-forge-red font-bold text-sm mb-1">OpenAI API key missing or invalid</p>
+          <p class="text-gray-500 text-xs">Add your key to <code class="text-forge-red">backend/.env</code><br/>then restart the server.</p>
+        </div>`;
+      document.getElementById("emptyState").classList.remove("hidden");
+      btn.disabled = false;
+      document.getElementById("askBtnText").textContent = "Generate Project";
+      return;
+    }
+
     hideLoading();
     renderResults(data);
     const nodes = (data.related_ideas || []).map(t => ({ text: t }));
     nodes.push({ text: question, isQuery: true });
     drawGraph(nodes);
   } catch (e) {
+    clearInterval(stageTimer);
     hideLoading();
     document.getElementById("emptyState").innerHTML =
       `<p class="text-red-400 text-sm px-4 text-center">❌ ${e.message}<br/><span class="text-xs text-gray-600">Is the backend running at port 8000?</span></p>`;
@@ -532,17 +548,16 @@ function renderResults(data) {
   document.getElementById("relatedIdeas").innerHTML = ideas.length
     ? ideas.map(i => `<span class="text-xs bg-forge-red/10 border border-forge-red/20 rounded-full px-3 py-1 text-gray-300">${i}</span>`).join("")
     : '<span class="text-xs text-gray-600 italic">none retrieved</span>';
-  document.getElementById("insightBody").innerHTML = md(data.insight || "");
-  document.getElementById("projectBody").innerHTML = md(data.project || "");
+  document.getElementById("insightBody").innerHTML  = md(data.insight || "");
+  document.getElementById("projectBody").innerHTML  = md(data.project || "");
   const rc = document.getElementById("resultsContent");
-  rc.classList.remove("hidden");
-  rc.classList.add("flex");
+  rc.classList.remove("hidden"); rc.classList.add("flex");
   document.getElementById("emptyState").classList.add("hidden");
 }
 
 function clearResults() {
-  document.getElementById("resultsContent").classList.add("hidden");
-  document.getElementById("resultsContent").classList.remove("flex");
+  const rc = document.getElementById("resultsContent");
+  rc.classList.add("hidden"); rc.classList.remove("flex");
   const es = document.getElementById("emptyState");
   es.innerHTML = `
     <div class="w-16 h-16 bg-forge-red/10 border border-forge-red/20 rounded-2xl flex items-center justify-center mb-4 text-3xl">🚀</div>
@@ -567,23 +582,20 @@ const EDU_IDEAS = [
 ];
 
 async function loadBatch(ideas, question) {
-  setSaveStatus(`⏳ Preloading ${ideas.length} ideas…`, "text-forge-red");
+  setSaveStatus(`⏳ Loading ${ideas.length} ideas…`, "text-forge-red");
   for (const i of ideas) {
-    await fetch(`${BASE}/add`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(i),
-    }).catch(() => {});
+    await fetch(`${BASE}/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(i) }).catch(()=>{});
   }
-  await loadMemories();
+  await loadMemories(); updateStatsBadge();
   document.getElementById("questionInput").value = question;
   setSaveStatus(`✅ ${ideas.length} ideas loaded — click Generate Project!`, "text-forge-red");
 }
+
 async function loadDemo() {
   setSaveStatus("⏳ Loading fitness demo…", "text-forge-red");
   try {
     await fetch(`${BASE}/demo`, { method: "POST" });
-    await loadMemories();
+    await loadMemories(); updateStatsBadge();
     document.getElementById("questionInput").value = "fitness startup idea";
     setSaveStatus("✅ Demo loaded — click Generate Project!", "text-forge-red");
   } catch { await loadBatch(FITNESS_IDEAS, "fitness startup idea"); }
@@ -599,25 +611,23 @@ function drawGraph(items) {
   const cx = W/2, cy = H/2, r = Math.min(W,H)/2.5;
   const nodes = items.map((m, i) => {
     const angle = (2*Math.PI*i/items.length) - Math.PI/2;
-    return { x: cx + r*Math.cos(angle), y: cy + r*Math.sin(angle), label: (m.text||"").slice(0,22), isQuery: !!m.isQuery };
+    return { x: cx+r*Math.cos(angle), y: cy+r*Math.sin(angle), label:(m.text||"").slice(0,22), isQuery:!!m.isQuery };
   });
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i+1; j < nodes.length; j++) {
       const g = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
-      g.addColorStop(0, "rgba(255,31,31,.4)");
-      g.addColorStop(1, "rgba(127,0,0,.4)");
+      g.addColorStop(0, "rgba(255,31,31,.4)"); g.addColorStop(1, "rgba(127,0,0,.4)");
       ctx.strokeStyle = g; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
     }
   }
   nodes.forEach(n => {
-    ctx.beginPath(); ctx.arc(n.x, n.y, n.isQuery ? 7 : 5, 0, Math.PI*2);
+    ctx.beginPath(); ctx.arc(n.x, n.y, n.isQuery?7:5, 0, Math.PI*2);
     ctx.fillStyle = n.isQuery ? "#7f0000" : "#ff1f1f"; ctx.fill();
     ctx.font = "9px system-ui"; ctx.fillStyle = "#6b7280"; ctx.textAlign = "center";
     ctx.fillText(n.label, n.x, n.y+16);
   });
-  // graph activation animation
-  gsap.from("#graphCanvas", { scale: 0.85, opacity: 0, duration: 0.9, ease: "power3.out" });
+  gsap.from("#graphCanvas", { scale:0.85, opacity:0, duration:0.9, ease:"power3.out" });
 }
 function clearCanvas() {
   const c = document.getElementById("graphCanvas");
@@ -633,104 +643,59 @@ updateStatsBadge();
 
 <!-- ───────── GSAP ANIMATIONS ───────── -->
 <script>
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-  /* ── 1. Hero entrance — staggered timeline ── */
+  /* 1. Hero entrance timeline */
   const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
   heroTl
-    .from(".hero-badge",   { opacity: 0, y: -20, duration: 0.6 })
-    .from(".hero-title",   { opacity: 0, y: 60,  duration: 0.9, skewY: 2 },        "-=0.2")
-    .from(".hero-sub",     { opacity: 0, y: 30,  duration: 0.7 },                  "-=0.4")
-    .from(".hero-cta",     { opacity: 0, y: 20,  duration: 0.6 },                  "-=0.3")
-    .from(".hero-mockup",  { opacity: 0, y: 50,  scale: 0.96, duration: 1.0 },     "-=0.3");
+    .from(".hero-badge",  { opacity:0, y:-20, duration:0.6 })
+    .from(".hero-title",  { opacity:0, y:60,  duration:0.9, skewY:2 },    "-=0.2")
+    .from(".hero-sub",    { opacity:0, y:30,  duration:0.7 },             "-=0.4")
+    .from(".hero-cta",    { opacity:0, y:20,  duration:0.6 },             "-=0.3")
+    .from(".hero-mockup", { opacity:0, y:50,  scale:0.96, duration:1.0 }, "-=0.3");
 
-  /* ── 2. Feature cards — scroll-triggered stagger ── */
-  gsap.from(".feature-card", {
-    scrollTrigger: {
-      trigger: ".features-header",
-      start: "top 80%",
-    },
-    opacity: 0,
-    y: 50,
-    duration: 0.7,
-    stagger: 0.15,
-    ease: "power3.out",
-  });
-
-  /* ── 3. Features heading ── */
+  /* 2. Features header */
   gsap.from(".features-header", {
-    scrollTrigger: {
-      trigger: ".features-header",
-      start: "top 85%",
-    },
-    opacity: 0,
-    x: -30,
-    duration: 0.8,
-    ease: "power3.out",
+    scrollTrigger: { trigger:".features-header", start:"top 85%" },
+    opacity:0, x:-30, duration:0.8, ease:"power3.out"
   });
 
-  /* ── 4. How It Works steps — scroll-triggered stagger ── */
+  /* 3. Feature cards stagger */
+  gsap.from(".feature-card", {
+    scrollTrigger: { trigger:".features-header", start:"top 80%" },
+    opacity:0, y:50, duration:0.7, stagger:0.15, ease:"power3.out"
+  });
+
+  /* 4. How it works steps */
   gsap.from(".step", {
-    scrollTrigger: {
-      trigger: ".step",
-      start: "top 85%",
-    },
-    opacity: 0,
-    y: 40,
-    duration: 0.65,
-    stagger: 0.18,
-    ease: "power3.out",
+    scrollTrigger: { trigger:".step", start:"top 85%" },
+    opacity:0, y:40, duration:0.65, stagger:0.18, ease:"power3.out"
   });
 
-  /* ── 5. Workspace panels — scroll-triggered stagger ── */
+  /* 5. Workspace panels */
   gsap.from(".workspace-panel", {
-    scrollTrigger: {
-      trigger: ".workspace-panel",
-      start: "top 85%",
-    },
-    opacity: 0,
-    y: 45,
-    duration: 0.75,
-    stagger: 0.14,
-    ease: "power3.out",
+    scrollTrigger: { trigger:".workspace-panel", start:"top 85%" },
+    opacity:0, y:45, duration:0.75, stagger:0.14, ease:"power3.out"
   });
 
-  /* ── 6. Smooth scroll for START FORGING button ── */
+  /* 6. START FORGING smooth scroll */
   document.getElementById("launchAppBtn")?.addEventListener("click", e => {
     e.preventDefault();
     const target = document.getElementById("workspace");
     if (!target) return;
-    gsap.to(window, {
-      duration: 1.1,
-      scrollTo: { y: target, offsetY: 80 },
-      ease: "power3.inOut",
-    });
+    gsap.to(window, { duration:1.1, scrollTo:{ y:target, offsetY:80 }, ease:"power3.inOut" });
   });
 
-  /* ── 7. Card hover lift + red glow ── */
+  /* 7. Feature card hover lift + red glow */
   document.querySelectorAll(".feature-card").forEach(card => {
-    card.addEventListener("mouseenter", () => {
-      gsap.to(card, {
-        y: -6,
-        boxShadow: "0 0 32px rgba(255,31,31,0.22)",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    });
-    card.addEventListener("mouseleave", () => {
-      gsap.to(card, {
-        y: 0,
-        boxShadow: "0 0 0px rgba(255,31,31,0)",
-        duration: 0.3,
-        ease: "power2.in",
-      });
-    });
+    card.addEventListener("mouseenter", () => gsap.to(card, { y:-6, boxShadow:"0 0 32px rgba(255,31,31,0.22)", duration:0.3, ease:"power2.out" }));
+    card.addEventListener("mouseleave", () => gsap.to(card, { y:0,  boxShadow:"0 0 0px rgba(255,31,31,0)",    duration:0.3, ease:"power2.in"  }));
   });
 
-  /* ── 8. Button hover scale ── */
+  /* 8. Button hover scale */
   document.querySelectorAll("#saveBtn, #askBtn, #launchAppBtn").forEach(btn => {
-    btn.addEventListener("mouseenter", () => gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power1.out" }));
-    btn.addEventListener("mouseleave", () => gsap.to(btn, { scale: 1.00, duration: 0.2, ease: "power1.in"  }));
+    btn.addEventListener("mouseenter", () => gsap.to(btn, { scale:1.05, duration:0.2, ease:"power1.out" }));
+    btn.addEventListener("mouseleave", () => gsap.to(btn, { scale:1.00, duration:0.2, ease:"power1.in"  }));
   });
 </script>
 

@@ -88,10 +88,14 @@ def stats():
 
 @app.post("/demo")
 def load_demo():
-    """Seed the memory with demo fitness ideas — one-click hackathon demo."""
+    """Seed the memory with demo fitness ideas — idempotent (skips duplicates)."""
+    existing_texts = {m["text"].strip().lower() for m in get_all_memories()}
+    added = 0
     for idea in DEMO_IDEAS:
-        add_memory(idea["text"], entry_type=idea["type"])
-    return {"status": "demo loaded", "ideas_added": len(DEMO_IDEAS), "memory_count": memory_count()}
+        if idea["text"].strip().lower() not in existing_texts:
+            add_memory(idea["text"], entry_type=idea["type"])
+            added += 1
+    return {"status": "demo loaded", "ideas_added": added, "memory_count": memory_count()}
 
 
 @app.get("/health")
