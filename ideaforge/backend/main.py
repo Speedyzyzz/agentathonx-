@@ -3,8 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from memory import add_memory, search_memory, get_all_memories, memory_count
 from agent import (
-    analyze_new_idea,
-    ask_second_brain,
     infer_theme,
     generate_project,
     generate_insight,
@@ -26,7 +24,7 @@ app.add_middleware(
 # ── Models ────────────────────────────────────────────────────────────
 class Idea(BaseModel):
     text: str
-    type: str = "idea"          # idea | note | link | problem | solution | project
+    type: str = "idea"  # idea | note | link | problem | solution | project
 
 
 class Query(BaseModel):
@@ -36,28 +34,21 @@ class Query(BaseModel):
 # ── Endpoints ─────────────────────────────────────────────────────────
 @app.post("/add")
 def add_idea(data: Idea):
-    """Store a new idea and get immediate Second Brain analysis."""
-    # Search for related memories BEFORE storing (so we don't match itself)
-    related = search_memory(data.text, n_results=10)
-
-    # Store the new idea
+    """Store a new idea instantly — no LLM call, always fast."""
+    related = search_memory(data.text, n_results=5)
     doc_id = add_memory(data.text, entry_type=data.type)
-
-    # Analyze connections
-    analysis = analyze_new_idea(data.text, related)
 
     return {
         "status": "idea stored",
         "id": doc_id,
         "memory_count": memory_count(),
         "related_memories": related,
-        "analysis": analysis,
     }
 
 
 @app.post("/ask")
 def ask_question(data: Query):
-    """Ask the Second Brain — retrieve memories, detect theme, generate insight + project."""
+    """Ask the Second Brain — retrieve, theme, insight, project (LLM called here)."""
     related = search_memory(data.question, n_results=10)
 
     theme = infer_theme(related)
@@ -74,11 +65,7 @@ def ask_question(data: Query):
 
 @app.get("/memories")
 def list_memories():
-    """Return all stored memories (for the UI memory bank)."""
-    return {
-        "count": memory_count(),
-        "memories": get_all_memories(),
-    }
+    return {"count": memory_count(), "memories": get_all_memories()}
 
 
 @app.get("/health")
