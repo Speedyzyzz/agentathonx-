@@ -16,13 +16,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Demo seed data — LOCKED, produces FitGuide AI concept ─────────────
+# ── Demo seed data — LOCKED, always produces the same fitness concept ──
 DEMO_IDEAS = [
-    {"text": "AI gym trainer",                        "type": "idea"},
+    {"text": "AI gym trainer",                           "type": "idea"},
     {"text": "people struggle with fitness consistency", "type": "problem"},
-    {"text": "beginner workout confusion",            "type": "problem"},
-    {"text": "habit tracking for workouts",           "type": "idea"},
-    {"text": "AI voice coaching for fitness",         "type": "idea"},
+    {"text": "beginner workout confusion",               "type": "problem"},
+    {"text": "habit tracking for workouts",              "type": "idea"},
+    {"text": "AI voice coaching for fitness",            "type": "idea"},
 ]
 DEMO_QUESTION = "fitness startup idea"
 
@@ -64,27 +64,11 @@ def ask_question(data: Query):
 
     related = search_memory(data.question, n_results=8)
 
-    # ── AI calls — each isolated so one failure never kills the response ──
-    try:
-        theme = infer_theme(related)
-        if "error:" in theme:
-            raise ValueError(theme)
-    except Exception:
-        theme = "AI unavailable — showing idea connections only"
-
-    try:
-        insight = generate_insight(related, question=data.question)
-        if "error:" in insight:
-            raise ValueError(insight)
-    except Exception:
-        insight = "AI unavailable — showing idea connections only"
-
-    try:
-        project = generate_project(related, question=data.question, theme=theme)
-        if "error:" in project:
-            raise ValueError(project)
-    except Exception:
-        project = "AI unavailable — showing idea connections only"
+    # _chat() in agent.py always returns a clean fallback on failure —
+    # so these calls can never throw or return error strings.
+    theme   = infer_theme(related)
+    insight = generate_insight(related, question=data.question)
+    project = generate_project(related, question=data.question, theme=theme)
 
     return {
         "theme":         theme,
@@ -107,17 +91,19 @@ def stats():
 
 @app.post("/demo")
 def load_demo():
-    """Seed memory with the locked demo dataset — idempotent. Returns the demo question too."""
-    existing_texts = {m["text"].strip().lower() for m in get_all_memories()}
-    added = 0
+    """Wipe memory, seed the locked fitness demo, return demo_question for the frontend."""
+    # Always clear first so the demo is 100% deterministic
+    from memory import collection
+    ids = collection.get()["ids"]
+    if ids:
+        collection.delete(ids=ids)
+
     for idea in DEMO_IDEAS:
-        if idea["text"].strip().lower() not in existing_texts:
-            add_memory(idea["text"], entry_type=idea["type"])
-            added += 1
+        add_memory(idea["text"], entry_type=idea["type"])
+
     return {
         "status":        "demo loaded",
-        "ideas_added":   added,
-        "memory_count":  memory_count(),
+        "count":         len(DEMO_IDEAS),
         "demo_question": DEMO_QUESTION,
     }
 

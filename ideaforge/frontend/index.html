@@ -492,12 +492,21 @@ function parseProject(text) {
   ];
   headers.forEach((h, i) => {
     const next = headers[i + 1];
+    // Match "**Header**\ncontent" up to the next "**Header**"
     const re = new RegExp(
-      `\\*\\*${h}\\*\\*\\s*\\n([\\s\\S]*?)${next ? `(?=\\*\\*${next}\\*\\*)` : "$"}`, "i"
+      `\\*\\*${h}\\*\\*[\\s\\S]*?\\n([\\s\\S]*?)${next ? `(?=\\*\\*${next}\\*\\*)` : "$"}`, "i"
     );
     const m = text.match(re);
     sections[h] = m ? m[1].trim() : null;
   });
+
+  // Fallback: if "Project Name" section is null, grab the very first non-empty line
+  // (Llama sometimes writes the name before repeating the header)
+  if (!sections["Project Name"]) {
+    const firstLine = text.split("\n").find(l => l.trim() && !l.trim().startsWith("**"));
+    if (firstLine) sections["Project Name"] = firstLine.trim().replace(/^\*+|\*+$/g, "");
+  }
+
   return sections;
 }
 
@@ -752,28 +761,33 @@ async function loadDemo() {
     const res  = await fetch(`${BASE}/demo`, { method: "POST" });
     const data = await res.json();
     await loadMemories(); updateStatsBadge();
-    // Use the question the backend locked in — always "fitness startup idea"
     document.getElementById("questionInput").value = data.demo_question || "fitness startup idea";
-    setSaveStatus("✅ Demo loaded — click Generate Project!", "text-forge-red");
+    setSaveStatus("✅ Demo loaded!", "text-forge-red");
   } catch {
-    // Hard fallback — never crash the demo
-    await loadBatch([
+    // Hard fallback — manually seed if /demo is unreachable
+    const ideas = [
       { text: "AI gym trainer",                           type: "idea"    },
       { text: "people struggle with fitness consistency", type: "problem" },
       { text: "beginner workout confusion",               type: "problem" },
       { text: "habit tracking for workouts",              type: "idea"    },
       { text: "AI voice coaching for fitness",            type: "idea"    },
-    ], "fitness startup idea");
+    ];
+    for (const i of ideas) {
+      await fetch(`${BASE}/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(i) }).catch(()=>{});
+    }
+    await loadMemories(); updateStatsBadge();
+    document.getElementById("questionInput").value = "fitness startup idea";
+    setSaveStatus("✅ Demo loaded!", "text-forge-red");
   }
 }
 
 async function loadEduDemo() { await loadBatch(EDU_IDEAS, "education startup idea"); }
 
-// ── One-click demo: load ideas then immediately generate ───────────────
+// ── One-click demo: wipe → load → generate ────────────────────────────
 async function runDemo() {
   clearResults();
-  await loadDemo();
-  await generateProject();
+  await loadDemo();               // calls POST /demo (wipes + reseeds)
+  await generateProject();        // fires AI immediately
 }
 async function runEduDemo() {
   clearResults();
