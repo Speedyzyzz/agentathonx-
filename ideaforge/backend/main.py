@@ -122,6 +122,16 @@ def load_demo():
     }
 
 
+@app.post("/clear")
+def clear_memory():
+    """Wipe all memories — useful for clean demo resets without restarting the server."""
+    from memory import collection
+    ids = collection.get()["ids"]
+    if ids:
+        collection.delete(ids=ids)
+    return {"status": "cleared", "memory_count": memory_count()}
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "memory_count": memory_count()}
