@@ -5,6 +5,8 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>IdeaForge | Build Ideas That Think</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -86,20 +88,20 @@
 
   <div class="max-w-7xl mx-auto px-6 relative z-10">
     <div class="max-w-4xl">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-forge-red/30 bg-forge-red/5 mb-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-forge-red/30 bg-forge-red/5 mb-8 hero-badge">
         <span class="w-2 h-2 rounded-full bg-forge-red animate-pulse"></span>
         <span class="text-xs font-bold uppercase tracking-widest text-forge-red">Now in Beta v2.0</span>
       </div>
-      <h1 class="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-10 text-glow">
+      <h1 class="hero-title text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-10 text-glow">
         Build Ideas<br/>
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-forge-red to-red-900">That Think</span>
       </h1>
-      <p class="text-xl text-gray-400 max-w-2xl mb-12 leading-relaxed">
+      <p class="hero-sub text-xl text-gray-400 max-w-2xl mb-12 leading-relaxed">
         The next generation of AI agents. Synthetically trained, symbolically steered. IdeaForge builds autonomous workflows that adapt, reason, and execute with human-like precision.
       </p>
-      <div class="flex flex-wrap gap-4">
+      <div class="flex flex-wrap gap-4 hero-cta">
         <a href="#workspace">
-          <button class="px-8 py-4 bg-forge-red text-white font-bold rounded-lg hover:scale-105 transition-transform flex items-center gap-2">
+          <button id="launchAppBtn" class="px-8 py-4 bg-forge-red text-white font-bold rounded-lg hover:scale-105 transition-transform flex items-center gap-2">
             START FORGING
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
           </button>
@@ -114,7 +116,7 @@
   </div>
 
   <!-- Dashboard Mockup -->
-  <div class="max-w-6xl mx-auto px-6 mt-24">
+  <div class="max-w-6xl mx-auto px-6 mt-24 hero-mockup">
     <div class="relative group">
       <div class="absolute -inset-1 bg-gradient-to-r from-forge-red to-red-900 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
       <div class="relative bg-forge-gray rounded-xl border border-white/10 overflow-hidden shadow-2xl">
@@ -157,26 +159,26 @@
 <!-- ───────── FEATURES ───────── -->
 <section class="py-32 bg-forge-dark" id="features">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="mb-20">
+    <div class="mb-20 features-header">
       <h2 class="text-4xl font-bold mb-4">Core Architecture</h2>
       <p class="text-gray-500 max-w-xl">Deeply integrated systems designed to power the next generation of industrial-grade AI deployments.</p>
     </div>
     <div class="grid md:grid-cols-3 gap-8">
-      <div class="p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
+      <div class="feature-card p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
         <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
           <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Memory Engine</h3>
         <p class="text-gray-400 leading-relaxed">Persistent state management for agents, allowing them to recall context across multiple sessions and complex workflows.</p>
       </div>
-      <div class="p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
+      <div class="feature-card p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
         <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
           <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Idea Connections</h3>
         <p class="text-gray-400 leading-relaxed">A neural-inspired graph system that links disparate data points into cohesive, actionable project roadmaps automatically.</p>
       </div>
-      <div class="p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
+      <div class="feature-card p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
         <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
           <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
@@ -195,17 +197,17 @@
       <div class="h-1 w-20 bg-forge-red mx-auto rounded-full"></div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-      <div class="p-6">
+      <div class="step p-6">
         <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">1</div>
         <h3 class="font-bold text-lg mb-2">Store Ideas</h3>
         <p class="text-gray-500 text-sm">Save any thought, note, or concept — stored as a vector in ChromaDB memory.</p>
       </div>
-      <div class="p-6">
+      <div class="step p-6">
         <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">2</div>
         <h3 class="font-bold text-lg mb-2">AI Finds Connections</h3>
         <p class="text-gray-500 text-sm">Semantic search retrieves related ideas — AI discovers patterns you missed.</p>
       </div>
-      <div class="p-6">
+      <div class="step p-6">
         <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">3</div>
         <h3 class="font-bold text-lg mb-2">Generate Project</h3>
         <p class="text-gray-500 text-sm">LLM synthesises connected ideas into a full startup concept with features and roadmap.</p>
@@ -230,7 +232,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       <!-- ── LEFT: Add Idea + Memory Bank + Graph ── -->
-      <div class="flex flex-col gap-6">
+      <div class="workspace-panel flex flex-col gap-6">
 
         <!-- Add Idea -->
         <div class="bg-forge-gray border border-white/10 rounded-2xl p-6 neon-border">
@@ -283,7 +285,7 @@
       </div>
 
       <!-- ── MIDDLE: Ask AI ── -->
-      <div class="flex flex-col gap-6">
+      <div class="workspace-panel flex flex-col gap-6">
         <div class="bg-forge-gray border border-white/10 rounded-2xl p-6 neon-border flex-1 flex flex-col">
           <div class="flex items-center gap-2 mb-5">
             <div class="w-8 h-8 bg-forge-red/10 border border-forge-red/20 rounded-lg flex items-center justify-center text-lg">🔍</div>
@@ -317,7 +319,7 @@
       </div>
 
       <!-- ── RIGHT: Results ── -->
-      <div class="bg-forge-gray border border-white/10 rounded-2xl p-6 flex flex-col">
+      <div class="workspace-panel bg-forge-gray border border-white/10 rounded-2xl p-6 flex flex-col">
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
             <div class="w-8 h-8 bg-forge-red/10 border border-forge-red/20 rounded-lg flex items-center justify-center text-lg">🧠</div>
@@ -584,6 +586,8 @@ function drawGraph(items) {
     ctx.font = "9px system-ui"; ctx.fillStyle = "#6b7280"; ctx.textAlign = "center";
     ctx.fillText(n.label, n.x, n.y+16);
   });
+  // graph activation animation
+  gsap.from("#graphCanvas", { scale: 0.85, opacity: 0, duration: 0.9, ease: "power3.out" });
 }
 function clearCanvas() {
   const c = document.getElementById("graphCanvas");
@@ -594,6 +598,109 @@ document.getElementById("ideaInput")?.addEventListener("keydown", e => { if(e.ke
 document.getElementById("questionInput")?.addEventListener("keydown", e => { if(e.key==="Enter"&&e.metaKey) generateProject(); });
 
 loadMemories();
+</script>
+
+<!-- ───────── GSAP ANIMATIONS ───────── -->
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ── 1. Hero entrance — staggered timeline ── */
+  const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+  heroTl
+    .from(".hero-badge",   { opacity: 0, y: -20, duration: 0.6 })
+    .from(".hero-title",   { opacity: 0, y: 60,  duration: 0.9, skewY: 2 },        "-=0.2")
+    .from(".hero-sub",     { opacity: 0, y: 30,  duration: 0.7 },                  "-=0.4")
+    .from(".hero-cta",     { opacity: 0, y: 20,  duration: 0.6 },                  "-=0.3")
+    .from(".hero-mockup",  { opacity: 0, y: 50,  scale: 0.96, duration: 1.0 },     "-=0.3");
+
+  /* ── 2. Feature cards — scroll-triggered stagger ── */
+  gsap.from(".feature-card", {
+    scrollTrigger: {
+      trigger: ".features-header",
+      start: "top 80%",
+    },
+    opacity: 0,
+    y: 50,
+    duration: 0.7,
+    stagger: 0.15,
+    ease: "power3.out",
+  });
+
+  /* ── 3. Features heading ── */
+  gsap.from(".features-header", {
+    scrollTrigger: {
+      trigger: ".features-header",
+      start: "top 85%",
+    },
+    opacity: 0,
+    x: -30,
+    duration: 0.8,
+    ease: "power3.out",
+  });
+
+  /* ── 4. How It Works steps — scroll-triggered stagger ── */
+  gsap.from(".step", {
+    scrollTrigger: {
+      trigger: ".step",
+      start: "top 85%",
+    },
+    opacity: 0,
+    y: 40,
+    duration: 0.65,
+    stagger: 0.18,
+    ease: "power3.out",
+  });
+
+  /* ── 5. Workspace panels — scroll-triggered stagger ── */
+  gsap.from(".workspace-panel", {
+    scrollTrigger: {
+      trigger: ".workspace-panel",
+      start: "top 85%",
+    },
+    opacity: 0,
+    y: 45,
+    duration: 0.75,
+    stagger: 0.14,
+    ease: "power3.out",
+  });
+
+  /* ── 6. Smooth scroll for START FORGING button ── */
+  document.getElementById("launchAppBtn")?.addEventListener("click", e => {
+    e.preventDefault();
+    const target = document.getElementById("workspace");
+    if (!target) return;
+    gsap.to(window, {
+      duration: 1.1,
+      scrollTo: { y: target, offsetY: 80 },
+      ease: "power3.inOut",
+    });
+  });
+
+  /* ── 7. Card hover lift + red glow ── */
+  document.querySelectorAll(".feature-card").forEach(card => {
+    card.addEventListener("mouseenter", () => {
+      gsap.to(card, {
+        y: -6,
+        boxShadow: "0 0 32px rgba(255,31,31,0.22)",
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    });
+    card.addEventListener("mouseleave", () => {
+      gsap.to(card, {
+        y: 0,
+        boxShadow: "0 0 0px rgba(255,31,31,0)",
+        duration: 0.3,
+        ease: "power2.in",
+      });
+    });
+  });
+
+  /* ── 8. Button hover scale ── */
+  document.querySelectorAll("#saveBtn, #askBtn, #launchAppBtn").forEach(btn => {
+    btn.addEventListener("mouseenter", () => gsap.to(btn, { scale: 1.05, duration: 0.2, ease: "power1.out" }));
+    btn.addEventListener("mouseleave", () => gsap.to(btn, { scale: 1.00, duration: 0.2, ease: "power1.in"  }));
+  });
 </script>
 
 </body>
