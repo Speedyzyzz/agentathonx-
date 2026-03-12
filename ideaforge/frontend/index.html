@@ -1093,40 +1093,46 @@ window.addEventListener("load", () => { runDemo("fitness", { generate: false });
     .from(".hero-cta",    { opacity:0, y:20,  duration:0.6 },             "-=0.3")
     .from(".hero-mockup", { opacity:0, y:50,  scale:0.96, duration:1.0 }, "-=0.3");
 
-  /* 2. Features header */
+  /* ── Safety net: ensure all animated sections are visible by default.
+     GSAP `from()` sets opacity:0 before the animation plays — if a
+     ScrollTrigger never fires (page already scrolled past, or mobile),
+     elements stay invisible. These sets guarantee they are always shown. ── */
+  gsap.set(".feature-card, .step, .workspace-panel, .features-header", { opacity: 1, y: 0 });
+
+  /* 2. Features header — trigger on the section, not the element itself */
   gsap.from(".features-header", {
     scrollTrigger: {
-      trigger: ".features-header", start: "top 85%",
+      trigger: "#features", start: "top 80%",
       toggleActions: "play none none none"
     },
-    opacity:0, x:-30, duration:0.8, ease:"power3.out"
+    opacity: 0, x: -30, duration: 0.8, ease: "power3.out"
   });
 
-  /* 3. Feature cards stagger */
+  /* 3. Feature cards stagger — trigger on the section so all 3 are in view */
   gsap.from(".feature-card", {
     scrollTrigger: {
-      trigger: ".features-header", start: "top 80%",
+      trigger: "#features", start: "top 65%",
       toggleActions: "play none none none"
     },
-    opacity:0, y:50, duration:0.7, stagger:0.15, ease:"power3.out"
+    opacity: 0, y: 50, duration: 0.7, stagger: 0.15, ease: "power3.out"
   });
 
-  /* 4. How it works steps */
+  /* 4. How it works steps — trigger on the section, not a single .step */
   gsap.from(".step", {
     scrollTrigger: {
-      trigger: ".step", start: "top 85%",
+      trigger: "#how-it-works", start: "top 75%",
       toggleActions: "play none none none"
     },
-    opacity:0, y:40, duration:0.65, stagger:0.18, ease:"power3.out"
+    opacity: 0, y: 40, duration: 0.65, stagger: 0.18, ease: "power3.out"
   });
 
-  /* 5. Workspace panels */
+  /* 5. Workspace panels — trigger on the section */
   gsap.from(".workspace-panel", {
     scrollTrigger: {
-      trigger: ".workspace-panel", start: "top 85%",
+      trigger: "#workspace", start: "top 80%",
       toggleActions: "play none none none"
     },
-    opacity:0, y:45, duration:0.75, stagger:0.14, ease:"power3.out"
+    opacity: 0, y: 45, duration: 0.75, stagger: 0.14, ease: "power3.out"
   });
 
   /* 6. START FORGING smooth scroll */
