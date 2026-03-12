@@ -6,7 +6,10 @@ collection = client.get_or_create_collection("ideas")
 
 
 def add_memory(text, entry_type="idea"):
-    """Store a new memory with metadata."""
+    """Store a new memory with structured metadata.
+
+    entry_type options: idea | note | link | problem | solution | project
+    """
     doc_id = str(abs(hash(text)))
     collection.add(
         documents=[text],
@@ -23,7 +26,7 @@ def search_memory(query, n_results=5):
         return []
 
     n = min(n_results, count)
-    results = collection.query(query_texts=[query], n_results=n)
+    results = collection.query(query_texts=[query], n_results=min(10, n))
 
     memories = []
     for doc, dist, meta in zip(

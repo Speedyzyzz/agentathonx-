@@ -101,17 +101,19 @@ Analyze connections, generate insights, and suggest an evolved idea.
 
 
 def infer_theme(memories: list[dict]) -> str:
-    """Infer a short theme label from a set of ideas."""
+    """Infer the single core theme connecting a set of ideas."""
     if not memories:
         return "No theme yet"
 
     ideas_text = "\n".join(f"- {m['text']}" for m in memories)
     prompt = f"""
-Given these ideas:
+These ideas are stored by the user:
+
 {ideas_text}
 
-Return a single short theme label (2-6 words). Example: "AI Fitness Coaching".
-Only return the label, nothing else.
+Identify the single core theme that connects them.
+
+Respond with only the theme name.
 """
 
     response = client.chat.completions.create(
@@ -121,25 +123,75 @@ Only return the label, nothing else.
     return response.choices[0].message.content.strip().strip('"')
 
 
+def generate_insight(memories: list[dict]) -> str:
+    """Explain the connection between ideas and the opportunity they reveal."""
+    if not memories:
+        return "No ideas stored yet to generate insights from."
+
+    ideas_text = "\n".join(f"- {m['text']}" for m in memories)
+    prompt = f"""
+These ideas belong to a user:
+
+{ideas_text}
+
+Explain the connection between them and what opportunity they reveal.
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return response.choices[0].message.content
+
+
 def generate_project(memories: list[dict], theme: str | None = None) -> str:
     """Generate a full project concept from connected ideas."""
     ideas_text = "\n".join(f"- {m['text']}" for m in memories)
-    theme_line = f"\nDetected Theme: {theme}\n" if theme else ""
 
     prompt = f"""
-You are an AI startup assistant and Second Brain Agent.
+You are IdeaForge, an AI Second Brain.
 
-The user's connected ideas:
+Your job is to analyze a user's stored ideas and generate meaningful connections.
+
+The user has previously stored these ideas:
+
 {ideas_text}
-{theme_line}
-Create a detailed project concept with:
 
-1. **Project Name**
-2. **Problem** — what real problem does this solve?
-3. **Solution** — how does the product work?
-4. **Target Users** — who benefits?
-5. **Core Features** — list 4-5 key features
-6. **Why This Matters** — one sentence on impact
+Follow these steps carefully.
+
+STEP 1
+Understand each idea.
+
+STEP 2
+Identify patterns or relationships between them.
+
+STEP 3
+Identify the core theme that connects them.
+
+STEP 4
+Create an evolved project concept based on the combination.
+
+Respond with the following format:
+
+**Project Name**
+
+**Core Theme**
+
+**Problem**
+Explain the real-world problem.
+
+**Solution**
+Explain the AI-powered solution.
+
+**Target Users**
+
+**Key Features**
+• feature 1
+• feature 2
+• feature 3
+
+**Why This Idea Works**
+Explain why combining these ideas is powerful.
 """
 
     response = client.chat.completions.create(

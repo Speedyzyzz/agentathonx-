@@ -7,6 +7,7 @@ from agent import (
     ask_second_brain,
     infer_theme,
     generate_project,
+    generate_insight,
 )
 
 app = FastAPI(
@@ -25,7 +26,7 @@ app.add_middleware(
 # ── Models ────────────────────────────────────────────────────────────
 class Idea(BaseModel):
     text: str
-    type: str = "idea"          # idea | note | link | project
+    type: str = "idea"          # idea | note | link | problem | solution | project
 
 
 class Query(BaseModel):
@@ -37,7 +38,7 @@ class Query(BaseModel):
 def add_idea(data: Idea):
     """Store a new idea and get immediate Second Brain analysis."""
     # Search for related memories BEFORE storing (so we don't match itself)
-    related = search_memory(data.text, n_results=5)
+    related = search_memory(data.text, n_results=10)
 
     # Store the new idea
     doc_id = add_memory(data.text, entry_type=data.type)
@@ -56,21 +57,16 @@ def add_idea(data: Idea):
 
 @app.post("/ask")
 def ask_question(data: Query):
-    """Ask the Second Brain — retrieve memories, detect theme, generate project."""
-    related = search_memory(data.question, n_results=5)
+    """Ask the Second Brain — retrieve memories, detect theme, generate insight + project."""
+    related = search_memory(data.question, n_results=10)
 
-    # Second Brain reasoning
-    insight = ask_second_brain(data.question, related)
-
-    # Theme detection
     theme = infer_theme(related)
-
-    # Full project generation
+    insight = generate_insight(related)
     project = generate_project(related, theme=theme)
 
     return {
-        "related_ideas": [m["text"] for m in related],
         "theme": theme,
+        "related_ideas": [m["text"] for m in related],
         "insight": insight,
         "project": project,
     }
