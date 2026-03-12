@@ -311,7 +311,7 @@
         </div>
       </div>
       <p class="text-xs text-gray-700 mt-3">
-        No account needed · Or click <button onclick="runDemo('fitness')" class="text-forge-red font-bold hover:underline">⚡ Try Demo</button> to skip straight to an AI result
+        Ideas pre-loaded on arrival · Click a demo button to swap dataset + generate · Or <button onclick="generateProject()" class="text-forge-red font-bold hover:underline">Generate Project</button> with the current memory
       </p>
     </div>
 
@@ -398,21 +398,25 @@
           <div class="mt-6 border-t border-white/5 pt-5">
             <p class="text-xs text-gray-600 mb-3 font-semibold uppercase tracking-wider">⚡ One-Click Demos</p>
             <div class="grid grid-cols-2 gap-2">
-              <button data-demo="fitness"     onclick="runDemo('fitness')"
+              <button data-demo="fitness"      onclick="runDemo('fitness')"
                 class="demo-btn text-left text-xs font-semibold rounded-xl px-3 py-2.5 bg-forge-red/10 border border-forge-red/20 hover:bg-forge-red/20 hover:border-forge-red/40 text-gray-300 transition-colors">
                 🏋️ Fitness AI
+                <span class="block text-[9px] text-gray-600 font-normal mt-0.5">load &amp; generate</span>
               </button>
-              <button data-demo="education"   onclick="runDemo('education')"
+              <button data-demo="education"    onclick="runDemo('education')"
                 class="demo-btn text-left text-xs font-semibold rounded-xl px-3 py-2.5 bg-white/5 border border-white/10 hover:bg-forge-red/10 hover:border-forge-red/30 text-gray-400 transition-colors">
                 🎓 Education AI
+                <span class="block text-[9px] text-gray-600 font-normal mt-0.5">load &amp; generate</span>
               </button>
-              <button data-demo="startup"     onclick="runDemo('startup')"
+              <button data-demo="startup"      onclick="runDemo('startup')"
                 class="demo-btn text-left text-xs font-semibold rounded-xl px-3 py-2.5 bg-white/5 border border-white/10 hover:bg-forge-red/10 hover:border-forge-red/30 text-gray-400 transition-colors">
                 🚀 Startup Builder
+                <span class="block text-[9px] text-gray-600 font-normal mt-0.5">load &amp; generate</span>
               </button>
               <button data-demo="productivity" onclick="runDemo('productivity')"
                 class="demo-btn text-left text-xs font-semibold rounded-xl px-3 py-2.5 bg-white/5 border border-white/10 hover:bg-forge-red/10 hover:border-forge-red/30 text-gray-400 transition-colors">
                 ⚡ Productivity AI
+                <span class="block text-[9px] text-gray-600 font-normal mt-0.5">load &amp; generate</span>
               </button>
             </div>
           </div>
@@ -886,18 +890,23 @@ const DEMO_FALLBACKS = {
   },
 };
 
-// Track the active demo button so we can show loading state
-let activeDemoBtn = null;
-
-async function runDemo(type = "fitness") {
-  clearResults();
-
-  // Highlight active demo button
+/**
+ * runDemo(type, { generate })
+ *   generate: true  → load ideas + immediately fire AI (button clicks)
+ *   generate: false → load ideas only, let judge click Generate (page boot)
+ *
+ * Always resets button highlight before setting the new active one.
+ */
+async function runDemo(type = "fitness", { generate = true } = {}) {
+  // Always clear previous active state first — no two buttons stay lit
   document.querySelectorAll(".demo-btn").forEach(b => b.classList.remove("demo-btn-active"));
-  activeDemoBtn = document.querySelector(`[data-demo="${type}"]`);
-  if (activeDemoBtn) activeDemoBtn.classList.add("demo-btn-active");
+  const demoBtn = document.querySelector(`[data-demo="${type}"]`);
+  if (demoBtn) demoBtn.classList.add("demo-btn-active");
 
-  setSaveStatus(`⏳ Loading ${type} demo…`, "text-forge-red");
+  if (generate) clearResults();
+
+  const label = type.charAt(0).toUpperCase() + type.slice(1);
+  setSaveStatus(`⏳ Loading ${label} demo…`, "text-forge-red");
 
   try {
     const res  = await fetch(`${BASE}/demo/${type}`, { method: "POST" });
@@ -905,20 +914,33 @@ async function runDemo(type = "fitness") {
     const data = await res.json();
     await loadMemories(); updateStatsBadge();
     document.getElementById("questionInput").value = data.question || `${type} startup idea`;
-    setSaveStatus(`✅ ${data.count} ideas loaded!`, "text-forge-red");
+    // Clear status if AI will generate immediately (it shows its own loading)
+    if (generate) {
+      setSaveStatus("", "");
+    } else {
+      setSaveStatus(`✔ ${label} demo ready — click Generate Project ↑`, "text-forge-red");
+    }
   } catch {
     // Backend unreachable — seed client-side fallback
     const fb = DEMO_FALLBACKS[type] || DEMO_FALLBACKS.fitness;
     await fetch(`${BASE}/clear`, { method: "POST" }).catch(() => {});
     for (const i of fb.ideas) {
-      await fetch(`${BASE}/add`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(i) }).catch(() => {});
+      await fetch(`${BASE}/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(i),
+      }).catch(() => {});
     }
     await loadMemories(); updateStatsBadge();
     document.getElementById("questionInput").value = fb.question;
-    setSaveStatus(`✅ ${fb.ideas.length} ideas loaded!`, "text-forge-red");
+    if (generate) {
+      setSaveStatus("", "");
+    } else {
+      setSaveStatus(`✔ ${label} demo ready — click Generate Project ↑`, "text-forge-red");
+    }
   }
 
-  await generateProject();
+  if (generate) await generateProject();
 }
 
 // ── Connection graph canvas ────────────────────────────────────────────
@@ -993,8 +1015,10 @@ document.getElementById("questionInput")?.addEventListener("keydown", e => { if 
 loadMemories();
 updateStatsBadge();
 
-// Auto-load fitness demo so judges see real content immediately
-window.addEventListener("load", () => { runDemo("fitness"); });
+// Pre-seed the fitness demo on page load so the memory bank is already
+// populated when the judge arrives — but don't fire the AI yet.
+// The "✔ Fitness demo ready" status tells them exactly what to do next.
+window.addEventListener("load", () => { runDemo("fitness", { generate: false }); });
 </script>
 
 <!-- ───────── GSAP ANIMATIONS ───────── -->
