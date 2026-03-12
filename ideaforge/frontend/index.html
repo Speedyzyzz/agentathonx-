@@ -10,191 +10,221 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              teal: '#2DD4BF',
-              indigo: '#6366F1',
-              dark: '#020617',
-              card: '#0F172A',
-            }
+            'forge-red':  '#ff1f1f',
+            'forge-dark': '#050505',
+            'forge-gray': '#121212',
           },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
           animation: {
-            'glow': 'glow 10s ease-in-out infinite alternate',
-          },
-          keyframes: {
-            glow: { '0%': { opacity: '0.3' }, '100%': { opacity: '0.6' } }
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
           }
         }
       }
     }
   </script>
   <style>
-    body { background-color: #020617; color: #F8FAFC; }
-    .glass-nav {
-      background: rgba(2, 6, 23, 0.7);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(255,31,31,.2); }
+      50%       { box-shadow: 0 0 30px rgba(255,31,31,.4); }
     }
-    .neon-border { position: relative; }
-    .neon-border::after {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      background: linear-gradient(to right, #2DD4BF, #6366F1);
-      z-index: -1;
-      border-radius: inherit;
-      opacity: 0.2;
+    .hover-glow:hover { animation: glow 2s infinite; border-color: #ff1f1f; }
+    .red-mesh {
+      background-image: radial-gradient(circle at 2px 2px, #ff1f1f15 1px, transparent 0);
+      background-size: 40px 40px;
     }
-    .feature-card:hover .card-icon { transform: scale(1.1) rotate(5deg); color: #2DD4BF; }
-    .gradient-text {
-      background: linear-gradient(to bottom right, #FFFFFF, #94A3B8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    .text-glow { text-shadow: 0 0 10px rgba(255,31,31,.5); }
     @keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
     .dot-1{animation:blink 1.2s infinite 0s}
     .dot-2{animation:blink 1.2s infinite .2s}
     .dot-3{animation:blink 1.2s infinite .4s}
-    .result-body h3  { font-size:1rem; font-weight:700; color:#2DD4BF; margin-top:.85rem; }
-    .result-body p   { color:#CBD5E1; line-height:1.7; }
-    .result-body ul  { list-style:disc; padding-left:1.25rem; color:#CBD5E1; }
-    .result-body li  { margin-bottom:.25rem; }
+    .result-body h3     { font-size:1rem; font-weight:700; color:#ff1f1f; margin-top:.85rem; }
+    .result-body p      { color:#a1a1aa; line-height:1.7; }
+    .result-body ul     { list-style:disc; padding-left:1.25rem; color:#a1a1aa; }
+    .result-body li     { margin-bottom:.25rem; }
     .result-body strong { color:#fff; }
-    .mem-pill:hover { background: rgba(45,212,191,.12); }
+    .mem-pill:hover     { background: rgba(255,31,31,.08); }
+    .neon-border { position:relative; }
+    .neon-border::after {
+      content:''; position:absolute; inset:-1px;
+      background: linear-gradient(to right,#ff1f1f,#7f0000);
+      z-index:-1; border-radius:inherit; opacity:.15;
+    }
   </style>
 </head>
 
-<body class="antialiased overflow-x-hidden">
+<body class="bg-forge-dark text-white font-sans selection:bg-forge-red selection:text-white overflow-x-hidden">
 
 <!-- ───────── NAV ───────── -->
-<nav class="fixed top-0 w-full z-50 glass-nav">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-16">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-gradient-to-br from-brand-teal to-brand-indigo rounded-lg flex items-center justify-center">
-          <span class="text-white font-black text-sm">IF</span>
-        </div>
-        <span class="text-xl font-bold tracking-tight">IdeaForge</span>
+<nav class="fixed top-0 w-full z-50 bg-forge-dark/80 backdrop-blur-md border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <div class="flex items-center gap-2 group cursor-pointer">
+      <div class="w-8 h-8 bg-forge-red rounded-sm flex items-center justify-center rotate-45 group-hover:rotate-90 transition-transform duration-500">
+        <div class="w-4 h-4 border-2 border-white"></div>
       </div>
-      <div class="hidden md:flex items-center space-x-8">
-        <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#features">Features</a>
-        <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#how-it-works">How it Works</a>
-        <a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="https://github.com/Speedyzyzz/agentathonx-" target="_blank">GitHub</a>
-      </div>
-      <a href="#workspace">
-        <button class="bg-white text-brand-dark px-5 py-2 rounded-full text-sm font-semibold hover:bg-slate-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-          Launch App
-        </button>
+      <span class="text-xl font-bold tracking-tighter uppercase">IdeaForge</span>
+    </div>
+    <div class="hidden md:flex items-center gap-10 text-sm font-medium text-gray-400">
+      <a class="hover:text-forge-red transition-colors" href="#features">Features</a>
+      <a class="hover:text-forge-red transition-colors" href="#how-it-works">How it Works</a>
+      <a class="hover:text-forge-red transition-colors flex items-center gap-2" href="https://github.com/Speedyzyzz/agentathonx-" target="_blank">
+        GitHub
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
       </a>
     </div>
+    <a href="#workspace">
+      <button class="bg-white text-black px-6 py-2.5 rounded-full text-sm font-bold hover:bg-forge-red hover:text-white transition-all duration-300">
+        Launch App
+      </button>
+    </a>
   </div>
 </nav>
 
 <!-- ───────── HERO ───────── -->
-<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
-    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-teal/20 rounded-full blur-[120px] animate-glow"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-indigo/20 rounded-full blur-[120px] animate-glow"></div>
-  </div>
-  <div class="absolute inset-0 -z-20 opacity-30">
-    <canvas id="hero-canvas" class="w-full h-full"></canvas>
-  </div>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-    <h1 class="text-5xl md:text-8xl font-black tracking-tighter gradient-text leading-tight mb-6">
-      BUILD IDEAS <br class="hidden md:block"/> THAT THINK
-    </h1>
-    <p class="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-10 leading-relaxed">
-      IdeaForge connects your thoughts and turns them into real projects. The first intelligent canvas for creators, thinkers, and builders.
-    </p>
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="#workspace">
-        <button class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-brand-teal to-brand-indigo rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-brand-teal/20">
-          Launch IdeaForge
-        </button>
-      </a>
-      <a href="#features">
-        <button class="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold hover:bg-white/10 transition-colors backdrop-blur-sm">
-          See How It Works
-        </button>
-      </a>
+<main class="relative pt-32 pb-20 overflow-hidden">
+  <div class="absolute top-1/4 -left-20 w-96 h-96 bg-forge-red/20 blur-[120px] rounded-full pointer-events-none"></div>
+  <div class="absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-forge-red/10 blur-[150px] rounded-full animate-pulse-slow pointer-events-none"></div>
+  <div class="absolute inset-0 red-mesh opacity-30 pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="max-w-4xl">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-forge-red/30 bg-forge-red/5 mb-8">
+        <span class="w-2 h-2 rounded-full bg-forge-red animate-pulse"></span>
+        <span class="text-xs font-bold uppercase tracking-widest text-forge-red">Now in Beta v2.0</span>
+      </div>
+      <h1 class="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-10 text-glow">
+        Build Ideas<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-forge-red to-red-900">That Think</span>
+      </h1>
+      <p class="text-xl text-gray-400 max-w-2xl mb-12 leading-relaxed">
+        The next generation of AI agents. Synthetically trained, symbolically steered. IdeaForge builds autonomous workflows that adapt, reason, and execute with human-like precision.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#workspace">
+          <button class="px-8 py-4 bg-forge-red text-white font-bold rounded-lg hover:scale-105 transition-transform flex items-center gap-2">
+            START FORGING
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+          </button>
+        </a>
+        <a href="#features">
+          <button class="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-lg hover:bg-white/10 transition-colors">
+            READ THE DOCS
+          </button>
+        </a>
+      </div>
     </div>
   </div>
-</section>
+
+  <!-- Dashboard Mockup -->
+  <div class="max-w-6xl mx-auto px-6 mt-24">
+    <div class="relative group">
+      <div class="absolute -inset-1 bg-gradient-to-r from-forge-red to-red-900 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+      <div class="relative bg-forge-gray rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+        <div class="h-10 bg-black/50 border-b border-white/10 flex items-center px-4 gap-2">
+          <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+          <div class="ml-4 px-4 py-1 bg-white/5 rounded text-[10px] text-gray-500 font-mono">ideaforge.app/dashboard</div>
+        </div>
+        <div class="p-8 grid grid-cols-12 gap-6 min-h-[400px]">
+          <aside class="col-span-3 space-y-4">
+            <div class="h-4 bg-white/5 rounded w-3/4"></div>
+            <div class="h-4 bg-forge-red/20 rounded w-full border border-forge-red/30"></div>
+            <div class="h-4 bg-white/5 rounded w-5/6"></div>
+            <div class="h-4 bg-white/5 rounded w-2/3"></div>
+          </aside>
+          <div class="col-span-9">
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="aspect-video bg-black/40 border border-white/5 rounded-lg p-4">
+                <div class="w-8 h-8 rounded bg-forge-red/20 mb-3"></div>
+                <div class="h-2 bg-white/10 rounded w-full mb-2"></div>
+                <div class="h-2 bg-white/10 rounded w-2/3"></div>
+              </div>
+              <div class="aspect-video bg-black/40 border border-white/5 rounded-lg p-4">
+                <div class="w-8 h-8 rounded bg-white/10 mb-3"></div>
+                <div class="h-2 bg-white/10 rounded w-full mb-2"></div>
+                <div class="h-2 bg-white/10 rounded w-1/2"></div>
+              </div>
+            </div>
+            <div class="h-32 bg-forge-red/5 border border-forge-red/20 rounded-lg flex items-center justify-center">
+              <span class="text-forge-red text-xs font-mono animate-pulse">SYSTEM_ACTIVE: PROCESSING_AGENT_THOUGHTS...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
 <!-- ───────── FEATURES ───────── -->
-<section class="py-24 bg-brand-dark/50" id="features">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">Core Intelligence</h2>
-      <div class="h-1 w-20 bg-brand-teal mx-auto rounded-full"></div>
+<section class="py-32 bg-forge-dark" id="features">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-20">
+      <h2 class="text-4xl font-bold mb-4">Core Architecture</h2>
+      <p class="text-gray-500 max-w-xl">Deeply integrated systems designed to power the next generation of industrial-grade AI deployments.</p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="feature-card p-8 bg-brand-card border border-white/5 rounded-3xl hover:border-brand-teal/50 transition-all group">
-        <div class="card-icon w-12 h-12 bg-brand-teal/10 rounded-xl flex items-center justify-center mb-6 transition-transform">
-          <svg class="h-6 w-6 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-          </svg>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
+        <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Memory Engine</h3>
-        <p class="text-slate-400 leading-relaxed">Stores every fragmented idea using high-dimensional vector memory. Never lose a thought again.</p>
+        <p class="text-gray-400 leading-relaxed">Persistent state management for agents, allowing them to recall context across multiple sessions and complex workflows.</p>
       </div>
-      <div class="feature-card p-8 bg-brand-card border border-white/5 rounded-3xl hover:border-brand-indigo/50 transition-all group">
-        <div class="card-icon w-12 h-12 bg-brand-indigo/10 rounded-xl flex items-center justify-center mb-6 transition-transform">
-          <svg class="h-6 w-6 text-brand-indigo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-          </svg>
+      <div class="p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
+        <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Idea Connections</h3>
-        <p class="text-slate-400 leading-relaxed">Our AI autonomously discovers hidden relationships between your thoughts across different domains.</p>
+        <p class="text-gray-400 leading-relaxed">A neural-inspired graph system that links disparate data points into cohesive, actionable project roadmaps automatically.</p>
       </div>
-      <div class="feature-card p-8 bg-brand-card border border-white/5 rounded-3xl hover:border-brand-teal/50 transition-all group">
-        <div class="card-icon w-12 h-12 bg-brand-teal/10 rounded-xl flex items-center justify-center mb-6 transition-transform">
-          <svg class="h-6 w-6 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-          </svg>
+      <div class="p-8 rounded-2xl bg-forge-gray border border-white/10 hover-glow transition-all group">
+        <div class="w-12 h-12 bg-forge-red/10 rounded-lg flex items-center justify-center mb-6 border border-forge-red/20 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 text-forge-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
         </div>
         <h3 class="text-xl font-bold mb-3">Project Generator</h3>
-        <p class="text-slate-400 leading-relaxed">Turn your brainstormed ideas into full startup concepts, roadmaps, and feature lists instantly.</p>
+        <p class="text-gray-400 leading-relaxed">Turn high-level concepts into full-stack scaffolds in seconds. From code to documentation, IdeaForge handles the heavy lifting.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ───────── HOW IT WORKS ───────── -->
-<section class="py-24" id="how-it-works">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<section class="py-24 bg-forge-dark" id="how-it-works">
+  <div class="max-w-4xl mx-auto px-6">
     <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
-      <div class="h-1 w-20 bg-brand-indigo mx-auto rounded-full"></div>
+      <h2 class="text-4xl font-bold mb-4">How It Works</h2>
+      <div class="h-1 w-20 bg-forge-red mx-auto rounded-full"></div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
       <div class="p-6">
-        <div class="w-12 h-12 bg-brand-teal/10 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-teal font-black text-xl">1</div>
+        <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">1</div>
         <h3 class="font-bold text-lg mb-2">Store Ideas</h3>
-        <p class="text-slate-400 text-sm">Save any thought, note, or concept — stored as a vector in ChromaDB memory.</p>
+        <p class="text-gray-500 text-sm">Save any thought, note, or concept — stored as a vector in ChromaDB memory.</p>
       </div>
       <div class="p-6">
-        <div class="w-12 h-12 bg-brand-indigo/10 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-indigo font-black text-xl">2</div>
+        <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">2</div>
         <h3 class="font-bold text-lg mb-2">AI Finds Connections</h3>
-        <p class="text-slate-400 text-sm">Semantic search retrieves related ideas — AI discovers patterns you missed.</p>
+        <p class="text-gray-500 text-sm">Semantic search retrieves related ideas — AI discovers patterns you missed.</p>
       </div>
       <div class="p-6">
-        <div class="w-12 h-12 bg-brand-teal/10 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-teal font-black text-xl">3</div>
+        <div class="w-12 h-12 bg-forge-red/10 border border-forge-red/30 rounded-full flex items-center justify-center mx-auto mb-4 text-forge-red font-black text-xl">3</div>
         <h3 class="font-bold text-lg mb-2">Generate Project</h3>
-        <p class="text-slate-400 text-sm">LLM synthesises connected ideas into a full startup concept with features and roadmap.</p>
+        <p class="text-gray-500 text-sm">LLM synthesises connected ideas into a full startup concept with features and roadmap.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ───────── WORKSPACE (LIVE APP) ───────── -->
-<section class="py-24 bg-brand-dark/60" id="workspace">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<section class="py-24 bg-black/40" id="workspace">
+  <div class="max-w-7xl mx-auto px-6">
 
     <div class="text-center mb-12">
-      <span class="inline-block px-4 py-1 rounded-full bg-brand-teal/10 text-brand-teal text-xs font-semibold uppercase tracking-widest mb-4">Live App</span>
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">Idea Workspace</h2>
-      <p class="text-slate-400 max-w-xl mx-auto">Add your raw ideas, then ask IdeaForge to connect them and generate a project concept.</p>
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-forge-red/30 bg-forge-red/5 mb-6">
+        <span class="w-2 h-2 rounded-full bg-forge-red animate-pulse"></span>
+        <span class="text-xs font-bold uppercase tracking-widest text-forge-red">Live App</span>
+      </div>
+      <h2 class="text-4xl font-bold mb-4">Idea Workspace</h2>
+      <p class="text-gray-500 max-w-xl mx-auto">Add your raw ideas, then ask IdeaForge to connect them and generate a project concept.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -203,17 +233,17 @@
       <div class="flex flex-col gap-6">
 
         <!-- Add Idea -->
-        <div class="bg-brand-card border border-white/5 rounded-3xl p-6 neon-border">
+        <div class="bg-forge-gray border border-white/10 rounded-2xl p-6 neon-border">
           <div class="flex items-center gap-2 mb-5">
-            <div class="w-8 h-8 bg-brand-teal/10 rounded-lg flex items-center justify-center text-lg">💡</div>
+            <div class="w-8 h-8 bg-forge-red/10 border border-forge-red/20 rounded-lg flex items-center justify-center text-lg">💡</div>
             <h3 class="font-bold text-lg">Add Idea</h3>
           </div>
           <div class="flex gap-2 mb-3">
             <input id="ideaInput"
-              class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-colors"
+              class="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-forge-red focus:ring-1 focus:ring-forge-red transition-colors"
               placeholder="Enter an idea, note, or problem…" />
             <select id="ideaType"
-              class="bg-white/5 border border-white/10 rounded-xl px-2 py-2 text-xs text-slate-300 outline-none focus:border-brand-teal">
+              class="bg-black/40 border border-white/10 rounded-xl px-2 py-2 text-xs text-gray-400 outline-none focus:border-forge-red">
               <option value="idea">💡 Idea</option>
               <option value="note">📝 Note</option>
               <option value="problem">❗ Problem</option>
@@ -222,62 +252,63 @@
             </select>
           </div>
           <button id="saveBtn" onclick="saveIdea()"
-            class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-teal to-brand-indigo font-semibold text-sm hover:opacity-90 transition-opacity">
+            class="w-full py-2.5 rounded-xl bg-forge-red font-bold text-sm hover:scale-[1.02] transition-transform">
             <span id="saveBtnText">Save Idea</span>
           </button>
-          <p id="saveStatus" class="mt-3 text-xs text-center text-slate-500 min-h-[1rem]"></p>
+          <p id="saveStatus" class="mt-3 text-xs text-center text-gray-600 min-h-[1rem]"></p>
         </div>
 
         <!-- Memory Bank -->
-        <div class="bg-brand-card border border-white/5 rounded-3xl p-6 flex-1">
+        <div class="bg-forge-gray border border-white/10 rounded-2xl p-6 flex-1">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
-              <span class="text-brand-indigo text-lg">💾</span>
+              <span class="text-forge-red text-lg">💾</span>
               <h3 class="font-bold">Memory Bank</h3>
             </div>
-            <span id="memCount" class="text-xs bg-white/5 rounded-full px-2 py-0.5 text-slate-400">0 ideas</span>
+            <span id="memCount" class="text-xs bg-white/5 rounded-full px-2 py-0.5 text-gray-500">0 ideas</span>
           </div>
           <div id="memoryList" class="space-y-2 max-h-64 overflow-y-auto pr-1">
-            <p class="text-xs text-slate-500 italic">No memories yet.</p>
+            <p class="text-xs text-gray-600 italic">No memories yet.</p>
           </div>
         </div>
 
         <!-- Connection Graph -->
-        <div class="bg-brand-card border border-white/5 rounded-3xl p-6">
+        <div class="bg-forge-gray border border-white/10 rounded-2xl p-6">
           <div class="flex items-center gap-2 mb-3">
-            <span class="text-brand-teal text-lg">🕸️</span>
+            <span class="text-forge-red text-lg">🕸️</span>
             <h3 class="font-bold">Connections</h3>
           </div>
-          <canvas id="graphCanvas" width="280" height="200" class="w-full rounded-xl bg-slate-950/60"></canvas>
+          <canvas id="graphCanvas" width="280" height="200" class="w-full rounded-xl bg-black/60"></canvas>
         </div>
       </div>
 
       <!-- ── MIDDLE: Ask AI ── -->
       <div class="flex flex-col gap-6">
-        <div class="bg-brand-card border border-white/5 rounded-3xl p-6 neon-border flex-1 flex flex-col">
+        <div class="bg-forge-gray border border-white/10 rounded-2xl p-6 neon-border flex-1 flex flex-col">
           <div class="flex items-center gap-2 mb-5">
-            <div class="w-8 h-8 bg-brand-indigo/10 rounded-lg flex items-center justify-center text-lg">🔍</div>
+            <div class="w-8 h-8 bg-forge-red/10 border border-forge-red/20 rounded-lg flex items-center justify-center text-lg">🔍</div>
             <h3 class="font-bold text-lg">Ask AI</h3>
           </div>
-          <p class="text-xs text-slate-500 mb-4">Describe what you're looking for — IdeaForge retrieves related memories and generates a full project concept.</p>
+          <p class="text-xs text-gray-600 mb-4">Describe what you're looking for — IdeaForge retrieves related memories and generates a full project concept.</p>
           <textarea id="questionInput" rows="5"
-            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-colors resize-none"
+            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 outline-none focus:border-forge-red focus:ring-1 focus:ring-forge-red transition-colors resize-none"
             placeholder="e.g. fitness startup idea&#10;AI education tool&#10;productivity app for remote teams"></textarea>
           <button id="askBtn" onclick="generateProject()"
-            class="mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-brand-indigo to-brand-teal font-bold text-sm hover:opacity-90 transition-opacity">
+            class="mt-4 w-full py-3 rounded-xl bg-forge-red font-bold text-sm hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
             <span id="askBtnText">Generate Project</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
           </button>
 
           <!-- Demo presets -->
           <div class="mt-6 border-t border-white/5 pt-5">
-            <p class="text-xs text-slate-500 mb-3 font-semibold uppercase tracking-wider">Quick Demo</p>
+            <p class="text-xs text-gray-600 mb-3 font-semibold uppercase tracking-wider">Quick Demo</p>
             <div class="space-y-2">
               <button onclick="loadDemo()"
-                class="w-full text-left text-xs text-slate-400 bg-white/5 hover:bg-white/10 rounded-xl px-3 py-2.5 transition-colors">
+                class="w-full text-left text-xs text-gray-400 bg-white/5 hover:bg-forge-red/10 hover:border-forge-red/30 border border-transparent rounded-xl px-3 py-2.5 transition-colors">
                 🏋️ Load fitness ideas + ask AI
               </button>
               <button onclick="loadEduDemo()"
-                class="w-full text-left text-xs text-slate-400 bg-white/5 hover:bg-white/10 rounded-xl px-3 py-2.5 transition-colors">
+                class="w-full text-left text-xs text-gray-400 bg-white/5 hover:bg-forge-red/10 hover:border-forge-red/30 border border-transparent rounded-xl px-3 py-2.5 transition-colors">
                 📚 Load education ideas + ask AI
               </button>
             </div>
@@ -286,53 +317,49 @@
       </div>
 
       <!-- ── RIGHT: Results ── -->
-      <div class="bg-brand-card border border-white/5 rounded-3xl p-6 flex flex-col">
+      <div class="bg-forge-gray border border-white/10 rounded-2xl p-6 flex flex-col">
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-brand-teal/10 rounded-lg flex items-center justify-center text-lg">🧠</div>
+            <div class="w-8 h-8 bg-forge-red/10 border border-forge-red/20 rounded-lg flex items-center justify-center text-lg">🧠</div>
             <h3 class="font-bold text-lg">AI Response</h3>
           </div>
-          <button onclick="clearResults()" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Clear</button>
+          <button onclick="clearResults()" class="text-xs text-gray-600 hover:text-gray-300 transition-colors">Clear</button>
         </div>
 
         <!-- Loading -->
         <div id="loadingState" class="hidden flex-col items-center justify-center py-12 gap-3">
-          <div class="flex gap-1 text-brand-teal text-3xl font-black">
+          <div class="flex gap-1 text-forge-red text-3xl font-black">
             <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span>
           </div>
-          <p id="loadingMsg" class="text-sm text-slate-400">Thinking…</p>
+          <p id="loadingMsg" class="text-sm text-gray-500">Thinking…</p>
         </div>
 
         <!-- Empty -->
         <div id="emptyState" class="flex flex-col items-center justify-center py-12 text-center">
-          <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4 text-3xl">🚀</div>
-          <p class="text-slate-400 text-sm">Your project concept will appear here.</p>
-          <p class="text-slate-600 text-xs mt-1">Add ideas → click Generate Project.</p>
+          <div class="w-16 h-16 bg-forge-red/10 border border-forge-red/20 rounded-2xl flex items-center justify-center mb-4 text-3xl">🚀</div>
+          <p class="text-gray-400 text-sm">Your project concept will appear here.</p>
+          <p class="text-gray-600 text-xs mt-1">Add ideas → click Generate Project.</p>
         </div>
 
         <!-- Results -->
         <div id="resultsContent" class="hidden flex-col gap-4 overflow-y-auto max-h-[640px] pr-1">
-          <!-- Theme -->
-          <div class="flex items-center gap-2 px-4 py-2.5 bg-brand-teal/10 border border-brand-teal/20 rounded-xl">
-            <span class="text-brand-teal text-xs font-semibold uppercase tracking-wider">Theme</span>
+          <div class="flex items-center gap-2 px-4 py-2.5 bg-forge-red/10 border border-forge-red/20 rounded-xl">
+            <span class="text-forge-red text-xs font-bold uppercase tracking-wider">Theme</span>
             <span id="themeText" class="text-white font-bold text-sm"></span>
           </div>
-          <!-- Related Ideas -->
           <div>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Retrieved Memories</p>
+            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">Retrieved Memories</p>
             <div id="relatedIdeas" class="flex flex-wrap gap-2"></div>
           </div>
           <hr class="border-white/5"/>
-          <!-- Insight -->
           <div>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Connection Insight</p>
-            <div id="insightBody" class="result-body text-sm bg-white/5 rounded-xl p-4"></div>
+            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">Connection Insight</p>
+            <div id="insightBody" class="result-body text-sm bg-black/40 rounded-xl p-4"></div>
           </div>
           <hr class="border-white/5"/>
-          <!-- Project -->
           <div>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Generated Project Concept</p>
-            <div id="projectBody" class="result-body text-sm bg-white/5 rounded-xl p-4"></div>
+            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">Generated Project Concept</p>
+            <div id="projectBody" class="result-body text-sm bg-black/40 rounded-xl p-4"></div>
           </div>
         </div>
       </div>
@@ -343,17 +370,20 @@
 
 <!-- ───────── FOOTER ───────── -->
 <footer class="py-12 border-t border-white/5">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-    <div class="flex items-center gap-2">
-      <div class="w-6 h-6 bg-white/10 rounded flex items-center justify-center">
-        <span class="text-xs font-bold">IF</span>
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+    <div class="flex items-center gap-2 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer">
+      <div class="w-6 h-6 bg-forge-red rounded-sm flex items-center justify-center rotate-45">
+        <div class="w-3 h-3 border border-white"></div>
       </div>
-      <span class="text-sm font-semibold text-slate-400">© 2025 IdeaForge AI</span>
+      <span class="text-sm font-bold tracking-tighter uppercase">IdeaForge</span>
     </div>
-    <p class="text-sm text-slate-500">Hackathon project by <span class="text-brand-teal font-semibold">Speedyzyzz</span></p>
-    <div class="flex gap-6">
-      <a class="text-slate-500 hover:text-white transition-colors text-sm" href="https://github.com/Speedyzyzz/agentathonx-" target="_blank">GitHub</a>
-      <a class="text-slate-500 hover:text-white transition-colors text-sm" href="http://127.0.0.1:8000/docs" target="_blank">API Docs</a>
+    <div class="text-gray-500 text-xs font-mono tracking-widest uppercase">
+      Hackathon project by <span class="text-forge-red hover:underline cursor-pointer">Speedyzyzz</span>
+    </div>
+    <div class="flex gap-6 text-gray-500 text-sm">
+      <a class="hover:text-white transition-colors" href="https://github.com/Speedyzyzz/agentathonx-" target="_blank">GitHub</a>
+      <a class="hover:text-white transition-colors" href="http://127.0.0.1:8000/docs" target="_blank">API Docs</a>
+      <a class="hover:text-white transition-colors" href="#">Status</a>
     </div>
   </div>
 </footer>
@@ -390,13 +420,12 @@ function hideLoading() {
   ls.classList.remove("flex");
 }
 
-function setSaveStatus(msg, cls = "text-slate-500") {
+function setSaveStatus(msg, cls = "text-gray-600") {
   const el = document.getElementById("saveStatus");
   el.className = `mt-3 text-xs text-center min-h-[1rem] ${cls}`;
   el.textContent = msg;
 }
 
-// ── Memory Bank ──
 async function loadMemories() {
   try {
     const res = await fetch(`${BASE}/memories`);
@@ -405,19 +434,18 @@ async function loadMemories() {
     document.getElementById("memCount").textContent = `${count} idea${count !== 1 ? "s" : ""}`;
     const list = document.getElementById("memoryList");
     if (!data.memories?.length) {
-      list.innerHTML = '<p class="text-xs text-slate-500 italic">No memories yet.</p>';
+      list.innerHTML = '<p class="text-xs text-gray-600 italic">No memories yet.</p>';
       return [];
     }
     list.innerHTML = data.memories.map(m => `
       <div class="mem-pill flex items-start gap-2 rounded-lg bg-white/5 px-3 py-2 transition-colors">
         <span class="text-sm mt-0.5">${TYPE_ICONS[m.type] || "💡"}</span>
-        <span class="text-xs text-slate-300 leading-relaxed">${m.text}</span>
+        <span class="text-xs text-gray-400 leading-relaxed">${m.text}</span>
       </div>`).join("");
     return data.memories;
   } catch { return []; }
 }
 
-// ── Save Idea ──
 async function saveIdea() {
   const text = document.getElementById("ideaInput").value.trim();
   if (!text) return;
@@ -433,7 +461,7 @@ async function saveIdea() {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    setSaveStatus(`✅ Saved! (${data.memory_count ?? "?"} in memory)`, "text-brand-teal");
+    setSaveStatus(`✅ Saved! (${data.memory_count ?? "?"} in memory)`, "text-forge-red");
     document.getElementById("ideaInput").value = "";
     await loadMemories();
     if (data.related_memories?.length) drawGraph(data.related_memories);
@@ -444,7 +472,6 @@ async function saveIdea() {
   document.getElementById("saveBtnText").textContent = "Save Idea";
 }
 
-// ── Generate Project ──
 async function generateProject() {
   const question = document.getElementById("questionInput").value.trim();
   if (!question) return;
@@ -468,7 +495,7 @@ async function generateProject() {
   } catch (e) {
     hideLoading();
     document.getElementById("emptyState").innerHTML =
-      `<p class="text-red-400 text-sm px-4 text-center">❌ ${e.message}<br/><span class="text-xs text-slate-500">Is the backend running at port 8000?</span></p>`;
+      `<p class="text-red-400 text-sm px-4 text-center">❌ ${e.message}<br/><span class="text-xs text-gray-600">Is the backend running at port 8000?</span></p>`;
     document.getElementById("emptyState").classList.remove("hidden");
   }
   btn.disabled = false;
@@ -479,8 +506,8 @@ function renderResults(data) {
   document.getElementById("themeText").textContent = data.theme || "—";
   const ideas = data.related_ideas || [];
   document.getElementById("relatedIdeas").innerHTML = ideas.length
-    ? ideas.map(i => `<span class="text-xs bg-white/5 border border-white/10 rounded-full px-3 py-1 text-slate-300">${i}</span>`).join("")
-    : '<span class="text-xs text-slate-500 italic">none retrieved</span>';
+    ? ideas.map(i => `<span class="text-xs bg-forge-red/10 border border-forge-red/20 rounded-full px-3 py-1 text-gray-300">${i}</span>`).join("")
+    : '<span class="text-xs text-gray-600 italic">none retrieved</span>';
   document.getElementById("insightBody").innerHTML = md(data.insight || "");
   document.getElementById("projectBody").innerHTML = md(data.project || "");
   const rc = document.getElementById("resultsContent");
@@ -494,14 +521,13 @@ function clearResults() {
   document.getElementById("resultsContent").classList.remove("flex");
   const es = document.getElementById("emptyState");
   es.innerHTML = `
-    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4 text-3xl">🚀</div>
-    <p class="text-slate-400 text-sm">Your project concept will appear here.</p>
-    <p class="text-slate-600 text-xs mt-1">Add ideas → click Generate Project.</p>`;
+    <div class="w-16 h-16 bg-forge-red/10 border border-forge-red/20 rounded-2xl flex items-center justify-center mb-4 text-3xl">🚀</div>
+    <p class="text-gray-400 text-sm">Your project concept will appear here.</p>
+    <p class="text-gray-600 text-xs mt-1">Add ideas → click Generate Project.</p>`;
   es.classList.remove("hidden");
   clearCanvas();
 }
 
-// ── Demo Loaders ──
 const FITNESS_IDEAS = [
   { text: "AI gym trainer", type: "idea" },
   { text: "people struggle with gym consistency", type: "problem" },
@@ -517,7 +543,7 @@ const EDU_IDEAS = [
 ];
 
 async function loadBatch(ideas, question) {
-  setSaveStatus(`⏳ Preloading ${ideas.length} demo ideas…`, "text-brand-teal");
+  setSaveStatus(`⏳ Preloading ${ideas.length} demo ideas…`, "text-forge-red");
   for (const i of ideas) {
     await fetch(`${BASE}/add`, {
       method: "POST",
@@ -527,12 +553,11 @@ async function loadBatch(ideas, question) {
   }
   await loadMemories();
   document.getElementById("questionInput").value = question;
-  setSaveStatus(`✅ ${ideas.length} ideas loaded — click Generate Project!`, "text-brand-teal");
+  setSaveStatus(`✅ ${ideas.length} ideas loaded — click Generate Project!`, "text-forge-red");
 }
 async function loadDemo()    { await loadBatch(FITNESS_IDEAS, "fitness startup idea"); }
 async function loadEduDemo() { await loadBatch(EDU_IDEAS,     "education startup idea"); }
 
-// ── Connection Graph ──
 function drawGraph(items) {
   const canvas = document.getElementById("graphCanvas");
   const ctx = canvas.getContext("2d");
@@ -547,16 +572,16 @@ function drawGraph(items) {
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i+1; j < nodes.length; j++) {
       const g = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
-      g.addColorStop(0, "rgba(45,212,191,.3)");
-      g.addColorStop(1, "rgba(99,102,241,.3)");
+      g.addColorStop(0, "rgba(255,31,31,.4)");
+      g.addColorStop(1, "rgba(127,0,0,.4)");
       ctx.strokeStyle = g; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
     }
   }
   nodes.forEach(n => {
     ctx.beginPath(); ctx.arc(n.x, n.y, n.isQuery ? 7 : 5, 0, Math.PI*2);
-    ctx.fillStyle = n.isQuery ? "#6366F1" : "#2DD4BF"; ctx.fill();
-    ctx.font = "9px system-ui"; ctx.fillStyle = "#94A3B8"; ctx.textAlign = "center";
+    ctx.fillStyle = n.isQuery ? "#7f0000" : "#ff1f1f"; ctx.fill();
+    ctx.font = "9px system-ui"; ctx.fillStyle = "#6b7280"; ctx.textAlign = "center";
     ctx.fillText(n.label, n.x, n.y+16);
   });
 }
@@ -565,48 +590,10 @@ function clearCanvas() {
   c.getContext("2d").clearRect(0,0,c.width,c.height);
 }
 
-// ── Shortcuts ──
 document.getElementById("ideaInput")?.addEventListener("keydown", e => { if(e.key==="Enter") saveIdea(); });
 document.getElementById("questionInput")?.addEventListener("keydown", e => { if(e.key==="Enter"&&e.metaKey) generateProject(); });
 
-// ── Init ──
 loadMemories();
-</script>
-
-<!-- ───────── HERO CANVAS ───────── -->
-<script>
-  const hCanvas = document.getElementById('hero-canvas');
-  const hCtx = hCanvas.getContext('2d');
-  let pts = [];
-  function initHero() {
-    hCanvas.width = window.innerWidth;
-    hCanvas.height = window.innerHeight;
-    pts = Array.from({length:40}, () => ({
-      x: Math.random()*hCanvas.width, y: Math.random()*hCanvas.height,
-      vx: (Math.random()-.5)*.5, vy: (Math.random()-.5)*.5,
-      r: Math.random()*2+1
-    }));
-  }
-  function drawHero() {
-    hCtx.clearRect(0,0,hCanvas.width,hCanvas.height);
-    hCtx.fillStyle = 'rgba(45,212,191,.5)';
-    pts.forEach((p,i) => {
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0||p.x>hCanvas.width) p.vx*=-1;
-      if(p.y<0||p.y>hCanvas.height) p.vy*=-1;
-      hCtx.beginPath(); hCtx.arc(p.x,p.y,p.r,0,Math.PI*2); hCtx.fill();
-      for(let j=i+1;j<pts.length;j++){
-        const q=pts[j], d=Math.hypot(p.x-q.x,p.y-q.y);
-        if(d<150){
-          hCtx.strokeStyle=`rgba(99,102,241,${1-d/150})`; hCtx.lineWidth=.5;
-          hCtx.beginPath(); hCtx.moveTo(p.x,p.y); hCtx.lineTo(q.x,q.y); hCtx.stroke();
-        }
-      }
-    });
-    requestAnimationFrame(drawHero);
-  }
-  window.addEventListener('resize', initHero);
-  initHero(); drawHero();
 </script>
 
 </body>
