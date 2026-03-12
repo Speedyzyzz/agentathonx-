@@ -107,6 +107,10 @@ def ask_question(data: Query):
     return {
         "theme":         theme,
         "related_ideas": [m["text"] for m in related],
+        "memories_used": [
+            {"text": m["text"], "type": m["type"], "distance": m["distance"]}
+            for m in related
+        ],
         "insight":       insight,
         "project":       project,
     }

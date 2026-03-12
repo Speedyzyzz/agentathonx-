@@ -46,6 +46,10 @@
     .result-body strong { color:#fff; }
     .mem-pill:hover     { background: rgba(255,31,31,.08); }
     .demo-btn-active    { background: rgba(255,31,31,.20) !important; border-color: rgba(255,31,31,.5) !important; color: #fff !important; }
+    .reasoning-pill { transition: background .2s; }
+    .reasoning-pill:hover { background: rgba(255,31,31,.06); }
+    @keyframes barGrow { from { width: 0 } }
+    .dist-bar { animation: barGrow .6s ease-out forwards; }
     .neon-border { position:relative; }
     .neon-border::after {
       content:''; position:absolute; inset:-1px;
@@ -457,10 +461,13 @@
             <span id="themeText" class="text-white font-bold text-sm"></span>
           </div>
 
-          <!-- Retrieved memories -->
-          <div>
-            <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold mb-2">💾 Retrieved Memories</p>
-            <div id="relatedIdeas" class="flex flex-wrap gap-2"></div>
+          <!-- AI Reasoning — memories the agent actually used -->
+          <div id="reasoningBlock">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs text-gray-600 uppercase tracking-wider font-semibold">🧠 AI Reasoning</p>
+              <span id="reasoningCount" class="text-[9px] font-mono text-gray-700 bg-white/5 rounded-full px-2 py-0.5"></span>
+            </div>
+            <div id="reasoningList" class="space-y-1.5"></div>
           </div>
 
           <hr class="border-white/5"/>
@@ -710,7 +717,7 @@ async function generateProject() {
   btn.disabled = true;
   document.getElementById("askBtnText").textContent = "Thinking…";
 
-  const stages = ["Searching memory…","Connecting ideas…","Detecting theme…","Generating concept…"];
+  const stages = ["Searching memory…","Connecting ideas…","Detecting theme…","Mapping reasoning chain…","Generating concept…"];
   let stageIdx = 0;
   showLoading(stages[0]);
   const stageTimer = setInterval(() => {
@@ -744,16 +751,63 @@ async function generateProject() {
   document.getElementById("askBtnText").textContent = "Generate Project";
 }
 
+// ── Render AI Reasoning panel ─────────────────────────────────────────
+function renderReasoning(memories) {
+  const TYPE_LABELS = {
+    idea: { icon: "💡", color: "text-forge-red",   bg: "bg-forge-red/10",  border: "border-forge-red/20"  },
+    problem: { icon: "❗", color: "text-orange-400", bg: "bg-orange-400/10", border: "border-orange-400/20" },
+    solution: { icon: "✅", color: "text-green-400", bg: "bg-green-400/10",  border: "border-green-400/20"  },
+    note: { icon: "📝", color: "text-blue-400",   bg: "bg-blue-400/10",   border: "border-blue-400/20"   },
+    default: { icon: "💡", color: "text-forge-red",  bg: "bg-forge-red/10",  border: "border-forge-red/20"  },
+  };
+
+  const list = document.getElementById("reasoningList");
+  const count = document.getElementById("reasoningCount");
+
+  if (!memories?.length) {
+    list.innerHTML = '<p class="text-xs text-gray-700 italic">No memories retrieved.</p>';
+    count.textContent = "";
+    return;
+  }
+
+  count.textContent = `${memories.length} vectors matched`;
+
+  // Distance is a cosine distance (lower = more similar).
+  // We convert to a 0–100% relevance score for the bar.
+  const maxDist = Math.max(...memories.map(m => m.distance ?? 1), 0.01);
+
+  list.innerHTML = memories.map((m, i) => {
+    const t = TYPE_LABELS[m.type] || TYPE_LABELS.default;
+    const relevance = Math.round((1 - (m.distance ?? 0) / maxDist) * 100);
+    // Stagger bar animation delay
+    const delay = `${i * 60}ms`;
+    return `
+      <div class="reasoning-pill flex items-center gap-2.5 rounded-lg bg-black/40 border border-white/5 px-3 py-2">
+        <span class="text-sm shrink-0">${t.icon}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs text-gray-300 leading-snug truncate">${m.text}</p>
+          <div class="mt-1 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+            <div class="dist-bar h-full bg-gradient-to-r from-forge-red to-red-900 rounded-full"
+                 style="width:${relevance}%; animation-delay:${delay}"></div>
+          </div>
+        </div>
+        <span class="shrink-0 text-[9px] font-mono ${t.color} ${t.bg} border ${t.border} rounded px-1.5 py-0.5">${m.type}</span>
+      </div>`;
+  }).join("");
+
+  // Stagger-animate the pills in
+  gsap.from("#reasoningList > div", {
+    opacity: 0, x: -12, duration: 0.35, stagger: 0.06, ease: "power2.out",
+  });
+}
+
 // ── Render structured results ─────────────────────────────────────────
 function renderResults(data) {
   // Theme
   document.getElementById("themeText").textContent = data.theme || "—";
 
-  // Retrieved memories
-  const ideas = data.related_ideas || [];
-  document.getElementById("relatedIdeas").innerHTML = ideas.length
-    ? ideas.map(i => `<span class="text-xs bg-forge-red/10 border border-forge-red/20 rounded-full px-3 py-1 text-gray-300">${i}</span>`).join("")
-    : '<span class="text-xs text-gray-600 italic">none retrieved</span>';
+  // AI Reasoning panel — uses full memory objects with type + distance
+  renderReasoning(data.memories_used || []);
 
   // Insight
   document.getElementById("insightBody").innerHTML = md(data.insight || "");
@@ -825,6 +879,11 @@ function clearResults() {
    "featuresBlock","whyBlock","roadmapBlock","projectFallback"].forEach(id => {
     document.getElementById(id)?.classList.add("hidden");
   });
+  // Reset reasoning panel
+  const rl = document.getElementById("reasoningList");
+  if (rl) rl.innerHTML = "";
+  const rc2 = document.getElementById("reasoningCount");
+  if (rc2) rc2.textContent = "";
   const rc = document.getElementById("resultsContent");
   rc.classList.add("hidden"); rc.classList.remove("flex");
   const es = document.getElementById("emptyState");
