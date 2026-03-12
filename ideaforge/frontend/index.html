@@ -587,16 +587,23 @@ async function saveIdea() {
 
 // ── Generate project (main AI call) ───────────────────────────────────
 async function generateProject() {
-  const question = document.getElementById("questionInput").value.trim();
+  const questionEl = document.getElementById("questionInput");
+  const question = questionEl ? questionEl.value.trim() : "";
+
   if (!question) {
     setSaveStatus("⬆️ Type a question first.", "text-gray-500");
     return;
   }
 
-  // Warn if no memories stored yet
-  const memText = document.getElementById("memCount")?.textContent || "";
-  const count = parseInt(memText) || 0;
-  if (count === 0) {
+  // Read memory count from the API directly — never trust stale DOM text
+  let memoryCount = 0;
+  try {
+    const s = await fetch(`${BASE}/stats`);
+    const sd = await s.json();
+    memoryCount = sd.memory_count ?? 0;
+  } catch {}
+
+  if (memoryCount === 0) {
     document.getElementById("emptyState").innerHTML =
       `<div class="text-center px-4">
         <div class="text-3xl mb-3">💾</div>
@@ -747,6 +754,8 @@ const EDU_IDEAS = [
 
 async function loadBatch(ideas, question) {
   setSaveStatus(`⏳ Loading ${ideas.length} ideas…`, "text-forge-red");
+  // Always wipe first — prevents accumulation if called multiple times
+  await fetch(`${BASE}/clear`, { method: "POST" }).catch(() => {});
   for (const i of ideas) {
     await fetch(`${BASE}/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(i) }).catch(()=>{});
   }
@@ -765,6 +774,7 @@ async function loadDemo() {
     setSaveStatus("✅ Demo loaded!", "text-forge-red");
   } catch {
     // Hard fallback — manually seed if /demo is unreachable
+    await fetch(`${BASE}/clear`, { method: "POST" }).catch(() => {});
     const ideas = [
       { text: "AI gym trainer",                           type: "idea"    },
       { text: "people struggle with fitness consistency", type: "problem" },
@@ -883,25 +893,37 @@ updateStatsBadge();
 
   /* 2. Features header */
   gsap.from(".features-header", {
-    scrollTrigger: { trigger:".features-header", start:"top 85%" },
+    scrollTrigger: {
+      trigger: ".features-header", start: "top 85%",
+      toggleActions: "play none none none"
+    },
     opacity:0, x:-30, duration:0.8, ease:"power3.out"
   });
 
   /* 3. Feature cards stagger */
   gsap.from(".feature-card", {
-    scrollTrigger: { trigger:".features-header", start:"top 80%" },
+    scrollTrigger: {
+      trigger: ".features-header", start: "top 80%",
+      toggleActions: "play none none none"
+    },
     opacity:0, y:50, duration:0.7, stagger:0.15, ease:"power3.out"
   });
 
   /* 4. How it works steps */
   gsap.from(".step", {
-    scrollTrigger: { trigger:".step", start:"top 85%" },
+    scrollTrigger: {
+      trigger: ".step", start: "top 85%",
+      toggleActions: "play none none none"
+    },
     opacity:0, y:40, duration:0.65, stagger:0.18, ease:"power3.out"
   });
 
   /* 5. Workspace panels */
   gsap.from(".workspace-panel", {
-    scrollTrigger: { trigger:".workspace-panel", start:"top 85%" },
+    scrollTrigger: {
+      trigger: ".workspace-panel", start: "top 85%",
+      toggleActions: "play none none none"
+    },
     opacity:0, y:45, duration:0.75, stagger:0.14, ease:"power3.out"
   });
 

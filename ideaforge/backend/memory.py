@@ -59,3 +59,10 @@ def get_all_memories() -> list[dict]:
 
 def memory_count() -> int:
     return collection.count()
+
+
+def clear_all_memories() -> None:
+    """Delete every document in the collection."""
+    ids = collection.get()["ids"]
+    if ids:
+        collection.delete(ids=ids)

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from memory import add_memory, search_memory, get_all_memories, memory_count
+from memory import add_memory, search_memory, get_all_memories, memory_count, clear_all_memories
 from agent import infer_theme, generate_project, generate_insight
 
 app = FastAPI(
@@ -92,15 +92,9 @@ def stats():
 @app.post("/demo")
 def load_demo():
     """Wipe memory, seed the locked fitness demo, return demo_question for the frontend."""
-    # Always clear first so the demo is 100% deterministic
-    from memory import collection
-    ids = collection.get()["ids"]
-    if ids:
-        collection.delete(ids=ids)
-
+    clear_all_memories()
     for idea in DEMO_IDEAS:
         add_memory(idea["text"], entry_type=idea["type"])
-
     return {
         "status":        "demo loaded",
         "count":         len(DEMO_IDEAS),
@@ -110,12 +104,9 @@ def load_demo():
 
 @app.post("/clear")
 def clear_memory():
-    """Wipe all memories — useful for clean demo resets without restarting the server."""
-    from memory import collection
-    ids = collection.get()["ids"]
-    if ids:
-        collection.delete(ids=ids)
-    return {"status": "cleared", "memory_count": memory_count()}
+    """Wipe all memories — clean demo reset without restarting the server."""
+    clear_all_memories()
+    return {"status": "cleared", "memory_count": 0}
 
 
 @app.get("/health")
